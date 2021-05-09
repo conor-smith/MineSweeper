@@ -1,4 +1,5 @@
 #include "unity.h"
+#include "minesweeper.h"
 
 void setUp(void) {
 

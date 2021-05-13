@@ -19,8 +19,9 @@ void deleteGame(Game* game);
 void resetGame(int length, int height, int mines);
 
 /* Used to play the game
+ * The board will not be built until the first reveal occurs
  * Will print to stdout if invalid parameters are given, and ignore invalid move
- * Will ignore any any attempts to reveal an already revealed or flagged tile, and will ignore attempts to reveal flagged tiles 
+ * Will ignore any any attempts to reveal an already revealed or flagged tile, and will ignore attempts to flag revealled tiles 
  * Once game has been won or lost, all subsequent moves are ignored*/
 enum GameState reveal(int x, int y);
 void flag(int x, int y);

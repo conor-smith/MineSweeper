@@ -9,7 +9,7 @@ $(BIN)/textui : $(SRC)/textui.c $(SRC)/minesweeper.c
 test: $(BIN)/minesweepertest
 	./$^
 
-$(BIN)/minesweepertest: libraries/unity.c $(SRC)/minesweepertest.c
+$(BIN)/minesweepertest: libraries/unity.c $(SRC)/minesweepertest.c $(SRC)/minesweeper.c
 	$(CC) $(CFLAGS) -I libraries -o $@ $^
 
 clean:

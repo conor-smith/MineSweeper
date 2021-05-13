@@ -1,31 +1,30 @@
+#include <stdlib.h>
 #include <stdbool.h>
 #include "enums.h"
 #include "minesweeper.h"
 
 typedef struct MineSweeperGame {
     int length, height, mines, flagged, revealed;
-    Tile** board;
-    GameState gameState;
+    enum Tile** board;
+    enum GameState gameState;
     bool gameStarted;
 } Game;
 
-//Documentation for functions in header file
+//Documentation for public functions in header file
 
 Game* createGame(int length, int height, int mines) {
-    return null;
+    return malloc(sizeof(Game));
 }
 
 void deleteGame(Game* game) {
-    return null;
 }
 
 void resetGame(int length, int height, int mines) {
-    return null;
 }
 
 
-GameState reveal(int x, int y) {
-    return null;
+enum GameState reveal(int x, int y) {
+    return ACTIVE;
 }
 
 void flag(int x, int y) {
@@ -49,9 +48,9 @@ int getRevealed(Game* game) {
 bool getGameStarted(Game* game) {
     return game->gameStarted;
 }
-GameState getGameState(Game* game) {
+enum GameState getGameState(Game* game) {
     return game->gameState;
 }
-Tile** getBoard(Game* game) {
+enum Tile** getBoard(Game* game) {
     return game->board;
 }

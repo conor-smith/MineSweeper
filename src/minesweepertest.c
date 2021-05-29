@@ -48,7 +48,7 @@ void correctsInvalidNumberOfMines(void) {
 void revealReturnsActive(void) {
     Game* game = createGame(10, 10, 75);
 
-    TEST_ASSERT(reveal(5, 5) == ACTIVE);
+    TEST_ASSERT(reveal(game, 5, 5) == ACTIVE);
 
     deleteGame(game);
 }
@@ -56,7 +56,7 @@ void revealReturnsActive(void) {
 void revealReturnsLoss(void) {
     Game* game = createGame(10, 10, 100);
 
-    TEST_ASSERT(reveal(5, 5) == LOSS);
+    TEST_ASSERT(reveal(game, 5, 5) == LOSS);
 
     deleteGame(game);
 }
@@ -64,7 +64,7 @@ void revealReturnsLoss(void) {
 void firstRevealIsNotAMine(void) {
     Game* game = createGame(10, 10, 99);
 
-    enum GameState gameState = reveal(5, 5);
+    enum GameState gameState = reveal(game, 5, 5);
 
     enum Tile** board = getBoard(game);
 
@@ -78,7 +78,7 @@ void firstRevealIsNotAMine(void) {
 void surroundingRevealAreNotMines(void) {
     Game* game = createGame(10, 10, 91);
 
-    enum GameState gameState = reveal(5, 5);
+    enum GameState gameState = reveal(game, 5, 5);
 
     enum Tile** board = getBoard(game);
 
@@ -100,18 +100,18 @@ void surroundingRevealAreNotMines(void) {
 void surroundingRevealAreNotMinesOnWall(void) {
     Game* game = createGame(10, 10, 94);
 
-    enum GameState gameState = reveal(9, 5);
+    enum GameState gameState = reveal(game, 9, 5);
 
     enum Tile** board = getBoard(game);
 
     TEST_ASSERT(gameState == WIN);
 
-    TEST_ASSERT(board[8][4] == REVEALED_0);
-    TEST_ASSERT(board[9][4] == REVEALED_0);
-    TEST_ASSERT(board[8][5] == REVEALED_0);
+    TEST_ASSERT(board[8][4] == REVEALED_5);
+    TEST_ASSERT(board[9][4] == REVEALED_2);
+    TEST_ASSERT(board[8][5] == REVEALED_3);
     TEST_ASSERT(board[9][5] == REVEALED_0);
-    TEST_ASSERT(board[8][6] == REVEALED_0);
-    TEST_ASSERT(board[9][6] == REVEALED_0);
+    TEST_ASSERT(board[8][6] == REVEALED_5);
+    TEST_ASSERT(board[9][6] == REVEALED_2);
 
     deleteGame(game);
 }
@@ -119,16 +119,16 @@ void surroundingRevealAreNotMinesOnWall(void) {
 void surroundingRevealAreNotMinesOnCorner(void) {
     Game* game = createGame(10, 10, 96);
 
-    enum GameState gameState = reveal(9, 0);
+    enum GameState gameState = reveal(game, 9, 0);
 
     enum Tile** board = getBoard(game);
 
     TEST_ASSERT(gameState == WIN);
 
-    TEST_ASSERT(board[8][0] == REVEALED_0);
+    TEST_ASSERT(board[8][0] == REVEALED_2);
     TEST_ASSERT(board[9][0] == REVEALED_0);
-    TEST_ASSERT(board[8][1] == REVEALED_0);
-    TEST_ASSERT(board[9][1] == REVEALED_0);
+    TEST_ASSERT(board[8][1] == REVEALED_5);
+    TEST_ASSERT(board[9][1] == REVEALED_2);
 
     deleteGame(game);
 }

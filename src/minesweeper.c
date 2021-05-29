@@ -32,15 +32,13 @@ void freeBoard(enum Tile** board) {
     free(board);
 }
 
-//All following functions are declared in header file
-
-Game* createGame(int length, int height, int mines) {
+//Takes an empty game object, and sets up internals
+void initializeGame(Game* game, int length, int height, int mines) {
     length = length >= 1 ? length : 1;
     height = height >= 1 ? height : 1;
     mines = mines >= 0 ? mines : 0;
     mines = mines <= length * height ? mines : length * height;
 
-    Game* game = malloc(sizeof(Game));
     game->length = length;
     game->height = height;
     game->mines = mines;
@@ -49,24 +47,39 @@ Game* createGame(int length, int height, int mines) {
     game->gameState = ACTIVE;
     game->gameStarted = false;
     game->board = createBoard(length, height);
+}
+
+/* End of private functions
+ * All following functions are declared in header file*/
+
+//Creates a new game
+Game* createGame(int length, int height, int mines) {
+    Game* game = malloc(sizeof(Game));
+
+    initializeGame(game, length, height, mines);
 
     return game;
 }
 
+//Resets internals of existing game
+void resetGame(Game* game, int length, int height, int mines) {
+    freeBoard(game->board);
+
+    initializeGame(game, length, height, mines);
+}
+
+//Frees all memory associated with game
 void deleteGame(Game* game) {
     freeBoard(game->board);
     free(game);
 }
 
-void resetGame(int length, int height, int mines) {
-}
-
-
-enum GameState reveal(int x, int y) {
+//Reveals a tile and all surrounding tiles (if empty)
+enum GameState reveal(Game* game, int x, int y) {
     return ACTIVE;
 }
 
-void flag(int x, int y) {
+void flag(Game* game, int x, int y) {
 }
 
 int getLength(Game* game) {

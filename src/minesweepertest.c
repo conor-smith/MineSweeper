@@ -64,9 +64,9 @@ void revealReturnsLoss(void) {
 void firstRevealIsNotAMine(void) {
     Game* game = createGame(10, 10, 99);
 
-    enum GameState gameState = reveal(game, 5, 5);
+    state gameState = reveal(game, 5, 5);
 
-    enum Tile** board = getBoard(game);
+    tile** board = getBoard(game);
 
     TEST_ASSERT_MESSAGE(gameState == WIN, "Game was not won");
 
@@ -78,9 +78,9 @@ void firstRevealIsNotAMine(void) {
 void surroundingRevealAreNotMines(void) {
     Game* game = createGame(10, 10, 91);
 
-    enum GameState gameState = reveal(game, 5, 5);
+    state gameState = reveal(game, 5, 5);
 
-    enum Tile** board = getBoard(game);
+    tile** board = getBoard(game);
 
     TEST_ASSERT_MESSAGE(gameState == WIN, "Game was not won");
 
@@ -100,9 +100,9 @@ void surroundingRevealAreNotMines(void) {
 void surroundingRevealAreNotMinesOnWall(void) {
     Game* game = createGame(10, 10, 94);
 
-    enum GameState gameState = reveal(game, 9, 5);
+    state gameState = reveal(game, 9, 5);
 
-    enum Tile** board = getBoard(game);
+    tile** board = getBoard(game);
 
     TEST_ASSERT(gameState == WIN);
 
@@ -119,9 +119,9 @@ void surroundingRevealAreNotMinesOnWall(void) {
 void surroundingRevealAreNotMinesOnCorner(void) {
     Game* game = createGame(10, 10, 96);
 
-    enum GameState gameState = reveal(game, 9, 0);
+    state gameState = reveal(game, 9, 0);
 
-    enum Tile** board = getBoard(game);
+    tile** board = getBoard(game);
 
     TEST_ASSERT(gameState == WIN);
 
@@ -129,6 +129,21 @@ void surroundingRevealAreNotMinesOnCorner(void) {
     TEST_ASSERT(board[9][0] == REVEALED_0);
     TEST_ASSERT(board[8][1] == REVEALED_5);
     TEST_ASSERT(board[9][1] == REVEALED_2);
+
+    deleteGame(game);
+}
+
+void canFlagTilesBeforeGame(void) {
+    Game* game = createGame(10, 10, 0);
+
+    flag(game, 5, 5);
+
+    state gameState = reveal(game, 0, 0);
+
+    tile** board = getBoard(game);
+
+    TEST_ASSERT(gameState == ACTIVE);
+    TEST_ASSERT(board[5][5] == FLAGGED_0);
 
     deleteGame(game);
 }
@@ -145,6 +160,7 @@ int main(void) {
     RUN_TEST(surroundingRevealAreNotMines);
     RUN_TEST(surroundingRevealAreNotMinesOnWall);
     RUN_TEST(surroundingRevealAreNotMinesOnCorner);
+    RUN_TEST(canFlagTilesBeforeGame);
 
     return UNITY_END();
 }

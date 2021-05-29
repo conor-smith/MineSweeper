@@ -1,23 +1,28 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include "enums.h"
 #include "minesweeper.h"
 
 typedef struct MineSweeperGame {
     int length, height, mines, flagged, revealed;
-    enum Tile** board;
-    enum GameState gameState;
+    tile** board;
+    state gameState;
     bool gameStarted;
 } Game;
+
+typedef struct {
+    int x, y;
+}  Position;
 
 //These are 'private' functions. They are for internal use and are not declared in the header file
 
 /* Returns double pointer of tiles
  * Creates an array of size length * height, then assigns it to a pointer
  * Assigns subsequent pointers to multiples of length, creating a 2D array*/
-enum Tile** createBoard(int length, int height) {
-    enum Tile** board = malloc(length * sizeof(enum Tile*));
-    enum Tile* tileArray = calloc(length * height, sizeof(enum Tile));
+tile** createBoard(int length, int height) {
+    tile** board = malloc(sizeof(tile*) * length);
+    tile* tileArray = calloc(length * height, sizeof(tile));
 
     for(int i = 0;i < length;i++) {
         board[i] = tileArray + length * i;
@@ -27,7 +32,7 @@ enum Tile** createBoard(int length, int height) {
 }
 
 // Frees the board specificaly
-void freeBoard(enum Tile** board) {
+void freeBoard(tile** board) {
     free(board[0]);
     free(board);
 }
@@ -49,8 +54,50 @@ void initializeGame(Game* game, int length, int height, int mines) {
     game->board = createBoard(length, height);
 }
 
-/* End of private functions
- * All following functions are declared in header file*/
+/* Gets co-ordinates surrouning a location, and prints data to data pointer
+ * data pointer will be a pointer to an array defined on the stack by the calling function*/
+void getSurroundingSquares(int* data, int length, int height, Position position) {
+    int* counter = data;
+    for(int xValue = x-1;xValue <= x+1;xValue++) {
+        for(int yValue = y;yValue <= y+1;yValue++) {
+            if(xValue > 0 && yValue > 0 && xValue < length && yValue < height) {
+                data[*counter * 2 + 1] = xValue;
+                data[*counter * 2 + 2] = yValue;
+                *counter++;
+            }
+        }
+    }
+}
+
+/*
+
+/* This essentially places all tiles in a 1Dimensional array, shuffles them, then assigns mines sequentially until none remain
+ * This only occurs after the first. The board is essentially empty before this
+ * The selected tile (x, y) is placed at the end of the array, surrounding tiles before, then all other tiles first
+ * This ensures that the selected tile, and those immediately surrounding, are the last to be made mines*/
+void placeMines(tile** board, int length, int height, Position position) {
+
+    //Every tile is represented by a position in this array
+    Position* positionList = malloc(sizeof(Position) * length * height);
+
+    //Initializes list of indexes
+    int counter = 0;
+    for(int x = 0;x < length;x++) {
+        for(int y = 0;y < height;y++) {
+            positionList[counter].x = x;
+            positionList[counter].y = y;
+            counter++;
+        }
+    }
+}
+
+/* Recursively reveals tiles
+ * If a tile has 0 surrounding mines, it will reveal surrounding tiles as well*/
+void revealAll(tile* game, int length, int height, Position position) {
+
+}
+
+// End of private functions
 
 //Creates a new game
 Game* createGame(int length, int height, int mines) {
@@ -64,7 +111,6 @@ Game* createGame(int length, int height, int mines) {
 //Resets internals of existing game
 void resetGame(Game* game, int length, int height, int mines) {
     freeBoard(game->board);
-
     initializeGame(game, length, height, mines);
 }
 
@@ -75,8 +121,15 @@ void deleteGame(Game* game) {
 }
 
 //Reveals a tile and all surrounding tiles (if empty)
-enum GameState reveal(Game* game, int x, int y) {
-    return ACTIVE;
+state reveal(Game* game, int x, int y) {
+    Position position;
+    position.x = x;
+    position.y = y;
+
+    //If this is the first move, mines must be placed
+    if(!game->gameStarted) {
+        placeMines(game->board, game->length, game->height, position);
+    }
 }
 
 void flag(Game* game, int x, int y) {
@@ -100,9 +153,9 @@ int getRevealed(Game* game) {
 bool getGameStarted(Game* game) {
     return game->gameStarted;
 }
-enum GameState getGameState(Game* game) {
+state getGameState(Game* game) {
     return game->gameState;
 }
-enum Tile** getBoard(Game* game) {
+tile** getBoard(Game* game) {
     return game->board;
 }

@@ -78,8 +78,18 @@ void getSurroundingPositions(Position* data, Game* game, int x, int y) {
     data[0].x = counter;
 }
 
+/* An implementation of the fisher yates shuffle
+ * Shuffles elements in data array inbetween start and end*/
 void shuffle(Position* data, int start, int end) {
 
+    srand(time(0));
+
+    for(int i = end - 1;i > start;i--) {
+        int indexToSwap = rand() % (end - start) + start;
+        Position swap = data[i];
+        data[i] = data[indexToSwap];
+        data[indexToSwap] = swap;
+    }
 }
 
 /* This exists only for placeMines

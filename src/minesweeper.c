@@ -26,7 +26,7 @@ tile** createBoard(int length, int height) {
     tile* tileArray = calloc(length * height, sizeof(tile));
 
     for(int i = 0;i < length;i++) {
-        board[i] = tileArray + length * i;
+        board[i] = tileArray + (height * i);
     }
 
     return board;
@@ -64,16 +64,13 @@ void initializeGame(Game* game, int length, int height, int mines) {
  * data pointer will be a pointer to an array of positions defined on the stack by the calling function
  * The very first position.x will contain the array size including the first position*/
 void getSurroundingPositions(Position* data, Game* game, int x, int y) {
-    int counter = 0;
+    int counter = 1;
     for(int xPosition = x-1;xPosition <= x+1;xPosition++) {
-        for(int yPosition = y;yPosition <= y+1;yPosition++) {
-            if(xPosition >= 0 && yPosition >= 0 && 
-                    xPosition < game->length && yPosition < game->height &&
-                    xPosition != x && xPosition != y) {
-
-                counter++;
+        for(int yPosition = y-1;yPosition <= y+1;yPosition++) {
+            if(xPosition >= 0 && yPosition >= 0 && xPosition < game->length && yPosition < game->height && !(xPosition == x && yPosition == y)) {
                 data[counter].x = xPosition;
                 data[counter].y = yPosition;
+                counter++;
             }
         }
     }
@@ -88,7 +85,7 @@ void shuffle(Position* data, int start, int end) {
 /* This exists only for placeMines
  * It simply checks if a position already exists in an array*/
 bool contains(Position* positions, int x, int y) {
-    for(int i = 0;i < positions[0].x;i++) {
+    for(int i = 1;i < positions[0].x;i++) {
         if(positions[i].x == x && positions[i].y == y) {
             return true;
         }
@@ -115,12 +112,12 @@ void placeMines(Game* game, int x, int y) {
 
     // Initializes list of positions
     surroundingEnd = 0;
-    for(int x = 0;x < game->length;x++) {
-        for(int y = 0;y < game->height;y++) {
+    for(int xValue = 0;xValue < game->length;xValue++) {
+        for(int yValue = 0;yValue < game->height;yValue++) {
             //Checks to see if position is in surrounding
-            if(!contains(surrounding, x, y)) {
-                positionList[surroundingEnd].x = x;
-                positionList[surroundingEnd].y = y;
+            if(!contains(surrounding, xValue, yValue) && !(xValue == x && yValue == y)) {
+                positionList[surroundingEnd].x = xValue;
+                positionList[surroundingEnd].y = yValue;
                 surroundingEnd++;
             }
         }
@@ -128,7 +125,7 @@ void placeMines(Game* game, int x, int y) {
 
     surroundingStart = surroundingEnd;
 
-    for(int i = 0;i < surrounding[0].x;i++) {
+    for(int i = 1;i < surrounding[0].x;i++) {
         positionList[surroundingEnd] = surrounding[i];
         surroundingEnd++;
     }
@@ -157,6 +154,7 @@ void revealAll(Game* game, int x, int y) {
         /* Reveal tile
          * As of this time, it is still unknown how many mines are surrounding it*/
         game->board[x][y] += 20;
+        game->revealed++;
 
         // Get surrounding tiles
         Position surrounding[9];
@@ -164,7 +162,9 @@ void revealAll(Game* game, int x, int y) {
 
         // Count surrounding mines
         for(int i = 1;i < surrounding[0].x;i++) {
-            game->board[x][y] += game->board[surrounding[i].x][surrounding[i].y] % 9 == 0;
+            if(game->board[surrounding[i].x][surrounding[i].y] == HIDDEN_MINE || game->board[surrounding[i].x][surrounding[i].y] == FLAGGED_MINE) {
+                game->board[x][y]++;
+            }
         }
 
         // If no surrounding mines, reveal all surrounding tiles
@@ -213,12 +213,10 @@ state reveal(Game* game, int x, int y) {
 
     if(game->board[x][y] == HIDDEN_MINE) {
         game->board[x][y] += 20;
+        game->revealed++;
         game->gameState = LOSS;
         return game->gameState;
     } else {
-        Position position;
-        position.x = x;
-        position.y = y;
         revealAll(game, x, y);
     }
 
@@ -239,9 +237,11 @@ void flag(Game* game, int x, int y) {
         switch(tileState) {
             case 1:
                 game->board[x][y] -= 10;
+                game->flagged--;
                 break;
             case 0:
                 game->board[x][y] += 10;
+                game->flagged++;
                 break;
         }
     }

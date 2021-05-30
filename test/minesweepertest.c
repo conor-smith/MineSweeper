@@ -8,7 +8,7 @@ void setUp(void) {}
 
 void tearDown(void) {}
 
-void createGameWorks(void) {
+void test_createGameWorks(void) {
     Game* game = createGame(10, 20, 50);
 
     TEST_ASSERT_MESSAGE(getLength(game) == 10, "Length was not properly set");
@@ -18,7 +18,7 @@ void createGameWorks(void) {
     deleteGame(game);
 }
 
-void correctsLessThan0Size(void) {
+void test_correctsLessThan0Size(void) {
     Game* badLength = createGame(-10, 10, 5);
     Game* badHeight = createGame(10, 0, 5);
     Game* badEverything = createGame(0, -5, 1);
@@ -34,7 +34,7 @@ void correctsLessThan0Size(void) {
     deleteGame(badEverything);
 }
 
-void correctsInvalidNumberOfMines(void) {
+void test_correctsInvalidNumberOfMines(void) {
     Game* lessThan0Mines = createGame(5, 5, -19);
     Game* moreThanMaxMines = createGame(5, 5, 100);
 
@@ -45,7 +45,7 @@ void correctsInvalidNumberOfMines(void) {
     deleteGame(moreThanMaxMines);
 }
 
-void revealReturnsActive(void) {
+void test_revealReturnsActive(void) {
     Game* game = createGame(10, 10, 75);
 
     TEST_ASSERT(reveal(game, 5, 5) == ACTIVE);
@@ -53,7 +53,7 @@ void revealReturnsActive(void) {
     deleteGame(game);
 }
 
-void revealReturnsLoss(void) {
+void test_revealReturnsLoss(void) {
     Game* game = createGame(10, 10, 100);
 
     TEST_ASSERT(reveal(game, 5, 5) == LOSS);
@@ -61,7 +61,7 @@ void revealReturnsLoss(void) {
     deleteGame(game);
 }
 
-void firstRevealIsNotAMine(void) {
+void test_firstRevealIsNotAMine(void) {
     Game* game = createGame(10, 10, 99);
 
     state gameState = reveal(game, 5, 5);
@@ -75,7 +75,7 @@ void firstRevealIsNotAMine(void) {
     deleteGame(game);
 }
 
-void surroundingRevealAreNotMines(void) {
+void test_surroundingRevealAreNotMines(void) {
     Game* game = createGame(10, 10, 91);
 
     state gameState = reveal(game, 5, 5);
@@ -97,7 +97,7 @@ void surroundingRevealAreNotMines(void) {
     deleteGame(game);
 }
 
-void surroundingRevealAreNotMinesOnWall(void) {
+void test_surroundingRevealAreNotMinesOnWall(void) {
     Game* game = createGame(10, 10, 94);
 
     state gameState = reveal(game, 9, 5);
@@ -116,7 +116,7 @@ void surroundingRevealAreNotMinesOnWall(void) {
     deleteGame(game);
 }
 
-void surroundingRevealAreNotMinesOnCorner(void) {
+void test_surroundingRevealAreNotMinesOnCorner(void) {
     Game* game = createGame(10, 10, 96);
 
     state gameState = reveal(game, 9, 0);
@@ -133,7 +133,7 @@ void surroundingRevealAreNotMinesOnCorner(void) {
     deleteGame(game);
 }
 
-void canFlagTilesBeforeGame(void) {
+void test_canFlagTilesBeforeGame(void) {
     Game* game = createGame(10, 10, 0);
 
     flag(game, 5, 5);
@@ -151,16 +151,16 @@ void canFlagTilesBeforeGame(void) {
 int main(void) {
     UNITY_BEGIN();
 
-    RUN_TEST(createGameWorks);
-    RUN_TEST(correctsLessThan0Size);
-    RUN_TEST(correctsInvalidNumberOfMines);
-    RUN_TEST(revealReturnsActive);
-    RUN_TEST(revealReturnsLoss);
-    RUN_TEST(firstRevealIsNotAMine);
-    RUN_TEST(surroundingRevealAreNotMines);
-    RUN_TEST(surroundingRevealAreNotMinesOnWall);
-    RUN_TEST(surroundingRevealAreNotMinesOnCorner);
-    RUN_TEST(canFlagTilesBeforeGame);
+    RUN_TEST(test_createGameWorks);
+    RUN_TEST(test_correctsLessThan0Size);
+    RUN_TEST(test_correctsInvalidNumberOfMines);
+    RUN_TEST(test_revealReturnsActive);
+    RUN_TEST(test_revealReturnsLoss);
+    RUN_TEST(test_firstRevealIsNotAMine);
+    RUN_TEST(test_surroundingRevealAreNotMines);
+    RUN_TEST(test_surroundingRevealAreNotMinesOnWall);
+    RUN_TEST(test_surroundingRevealAreNotMinesOnCorner);
+    RUN_TEST(test_canFlagTilesBeforeGame);
 
     return UNITY_END();
 }

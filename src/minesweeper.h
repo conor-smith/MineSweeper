@@ -23,7 +23,7 @@ void resetGame(Game* game, int length, int height, int mines);
  * Will print to stdout if invalid parameters are given, and ignore invalid move
  * Will ignore any any attempts to reveal an already revealed or flagged tile, and will ignore attempts to flag revealled tiles 
  * Once game has been won or lost, all subsequent moves are ignored*/
-enum GameState reveal(Game* game, int x, int y);
+state reveal(Game* game, int x, int y);
 void flag(Game* game, int x, int y);
 
 //Returns game metadata
@@ -33,7 +33,7 @@ int getMines(Game* game);
 int getFlagged(Game* game);
 int getRevealed(Game* game);
 bool getGameStarted(Game* game);
-enum GameState getGameState(Game* game);
-enum Tile** getBoard(Game* game);
+state getGameState(Game* game);
+tile** getBoard(Game* game);
 
 #endif

@@ -152,6 +152,16 @@ void placeMines(Game* game, int x, int y) {
         game->board[positionList[i].x][positionList[i].y] += 9;
     }
 
+    // Counts surrounding mines for remaining tiles
+    for(int i = game->mines;i < game->length * game->height;i++) {
+        Position surrounding[9];
+        getSurroundingPositions(surrounding, game, positionList[i].x, positionList[i].y);
+
+        for(int j = 1;j < surrounding[0].x;j++) {
+            game->board[positionList[i].x][positionList[i].y] += (game->board[surrounding[j].x][surrounding[j].y] == HIDDEN_MINE || game->board[surrounding[j].x][surrounding[j].y] == FLAGGED_MINE);
+        }
+    }
+
     // Free positionList
     free(positionList);
 }
@@ -166,19 +176,11 @@ void revealAll(Game* game, int x, int y) {
         game->board[x][y] += 20;
         game->revealed++;
 
-        // Get surrounding tiles
-        Position surrounding[9];
-        getSurroundingPositions(surrounding, game, x, y);
-
-        // Count surrounding mines
-        for(int i = 1;i < surrounding[0].x;i++) {
-            if(game->board[surrounding[i].x][surrounding[i].y] == HIDDEN_MINE || game->board[surrounding[i].x][surrounding[i].y] == FLAGGED_MINE) {
-                game->board[x][y]++;
-            }
-        }
-
         // If no surrounding mines, reveal all surrounding tiles
         if(game->board[x][y] == REVEALED_0) {
+            Position surrounding[9];
+            getSurroundingPositions(surrounding, game, x, y);
+
             for(int i = 1;i < surrounding[0].x;i++) {
                 revealAll(game, surrounding[i].x, surrounding[i].y);
             }

@@ -1,18 +1,18 @@
 CC=gcc
-CFLAGS=-g -Wall
+DEGUGFLAGS=-g -Wall
 LIB=libraries
 SRC=src
 TEST=test
 BIN=bin
 
 $(BIN)/textui : $(SRC)/textui.c $(SRC)/minesweeper.c
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(DEGUGFLAGS) -lncurses -o $@ $^
 
 test: $(BIN)/minesweepertest
 	./$^
 
 $(BIN)/minesweepertest: $(LIB)/unity.c $(TEST)/minesweepertest.c $(SRC)/minesweeper.c
-	$(CC) $(CFLAGS) -I $(LIB) -I $(SRC) -o $@ $^
+	$(CC) $(DEGUGFLAGS) -I $(LIB) -I $(SRC) -o $@ $^
 
 clean:
 	rm $(BIN)/*

@@ -4,123 +4,132 @@
 #include "enums.h"
 #include "minesweeper.h"
 
-struct Inputs {
-    int length, height, mines;
-};
+typedef struct {
+    int x,y;
+} GameCursor;
 
-int getNumber(char *string) {
-    char inputString[5];
-
-    addstr(string);
-    refresh();
-
-    scanw(inputString);
-
-    return atoi(inputString);
+void setDifficulty(Game *game) {
+    //TODO
 }
 
-void selectDifficulty(struct Inputs *inputs) {
-    erase();
+void renderBoard(Game *game) {
+    //TODO
+}
 
-    // Offset is the line on which the first option is displayed
-    const int offset = 3;
-    const int noOfOptions = 4;
+void renderGameCursor(GameCursor gameCursor) {
+    //TODO
+}
 
-    // An array containing all the options. The last value is always custom
-    char *options[] = {
-        "Beginner         9       9       10\n",
-        "Intermediate     16      16      40\n",
-        "Expert           30      16      99\n",
-        "Custom"};
-
-    struct Inputs inputOptions[] = {
-        {9, 9, 10},
-        {16, 16, 40},
-        {30, 16, 99}};
-
-    addstr("Select your difficulty\n\n");
-    addstr("                 Length  Height  Mines\n");
-
-    // Print all options
-    for(int i = 0;i < noOfOptions;i++) {
-        addstr(options[i]);
-    }
-
-    refresh();
-
-    // Allow user to select option
-    int input = 0;
-    int selectedOption = 0;
-    for(;input != 10;) {
-        attron(A_STANDOUT);
-        move(selectedOption+offset, 0);
-        addstr(options[selectedOption]);
-
-        input = getch();
-
-        attroff(A_STANDOUT);
-        move(selectedOption+offset, 0);
-
-        if(input == KEY_UP && selectedOption > 0) {
-            addstr(options[selectedOption]);
-            selectedOption--;
-        } else if(input == KEY_DOWN && selectedOption < noOfOptions-1) {
-            addstr(options[selectedOption]);
-            selectedOption++;
+// Returns true if y, false if n
+bool getYOrN(int yLocation, char* question) {
+    move(yLocation, 0);
+    echo();
+    curs_set(1);
+    while(true) {
+        addstr(question);
+        refresh();
+        switch(getch()) {
+            case 'y':
+                noecho();
+                curs_set(0);
+                return true;
+            case 'n':
+                noecho();
+                curs_set(0);
+                return false;
+            default:
+                move(yLocation+1, 0);
+                addstr("Please enter y or n");
+                move(yLocation, 0);
+                clrtoeol();
+                break;
         }
     }
+}
 
-    if(selectedOption < noOfOptions-1) {
-        *inputs = inputOptions[selectedOption];
-    } else {
-        move(offset+noOfOptions+1, 0);
-        echo();
-        curs_set(1);
-        keypad(stdscr, false);
-        inputs->length = getNumber("Length: ");
-        inputs->height = getNumber("Height: ");
-        inputs->mines = getNumber("Mines: ");
-        noecho();
-        curs_set(0);
-        keypad(stdscr, true);
+/* The only thing handled in this function are collecting inputs
+ * All logic and rendering is handled by other functions*/
+void gameLoop(Game *game) {
+    // Game loop. Can only be exited through quitting the game
+    while(true) {
+        // Initialize game
+        beginGame:
+        setDifficulty(game);
+        GameCursor gameCursor = {0, 0};
+
+        // Render the board
+        renderBoard(game);
+        while(getGameState(game) == ACTIVE) {
+            // Play game
+            renderGameCursor(gameCursor);
+
+            switch(getch()) {
+                case KEY_UP:
+                    gameCursor.y = gameCursor.y > 0 ? gameCursor.y-1 : gameCursor.y;
+                    break;
+                case KEY_DOWN:
+                    gameCursor.y = gameCursor.y < getHeight(game)-1 ? gameCursor.y+1 : gameCursor.y;
+                    break;
+                case KEY_LEFT:
+                    gameCursor.x = gameCursor.x > 0 ? gameCursor.x-1 : gameCursor.x;
+                    break;
+                case KEY_RIGHT:
+                    gameCursor.x = gameCursor.x < getLength(game)-1 ? gameCursor.x+1 : gameCursor.x;
+                    break;
+                case 'r':
+                    //TODO
+                    renderBoard(game);
+                    break;
+                case 'f':
+                    //TODO
+                    renderBoard(game);
+                    break;
+                case 'v':
+                    switch(getYOrN(getHeight(game)+2, "Are you sure you want to reset?(y/n) ")) {
+                        case true:
+                            goto beginGame;
+                    }
+                    break;
+                case 'q':
+                    switch(getYOrN(getHeight(game)+2, "Are you sure you want to quit?(y/n) ")) {
+                        case true:
+                            return;
+                    }
+                    break;
+            }
+        }
     }
-}
-
-void gameLoop() {
-    struct Inputs inputs;
-    selectDifficulty(&inputs);
-
-    erase();
-    move(0,0);
-
-    printw("Inputs\nLength:%d\nHeight:%d\nMines:%d", inputs.length, inputs.height, inputs.mines);
-
-    getch();
-}
-
-void printGreetings() {
-    addstr("-----------------------\n");
-    addstr("      MINESWEEPER      \n");
-    addstr("-----------------------\n\n");
-
-    refresh();
 }
 
 int main(int argc, char** argv) {
-    // Initialize ncurses
+    /* Initialize ncurses
+     * Remove echo, use colour and default colours,
+     * Ensure input is processed immediately*/
     initscr();
-    curs_set(0);
     noecho();
+    cbreak();
     start_color();
+    use_default_colors();
+    
+    // Make cursor invisible and allow non ASCII key inputs
+    curs_set(0);
     keypad(stdscr, true);
 
-    printGreetings();
+    // Print greeting
+    addstr("-------------------\n");
+    addstr("    MINESWEEPER    \n");
+    addstr("-------------------\n\n");
+    addstr("Arrow keys to move\n");
+    addstr("r to reveal\n");
+    addstr("f to flag\n");
+    addstr("v to reset and q to quit\n");
+    addstr("Press any key to continue");
+    refresh();
 
-    addstr("Press any key to continue\n");
-    getch();
+    gameLoop(createEmptyGame());
 
-    gameLoop();
-    getch();
-
+    erase();
     endwin();
+
+    printf("Thank you for playing!");
 }

@@ -199,6 +199,10 @@ Game* createGame(int length, int height, int mines) {
     return game;
 }
 
+Game* createEmptyGame() {
+    return calloc(1, sizeof(Game));
+}
+
 // Resets internals of existing game
 void resetGame(Game* game, int length, int height, int mines) {
     freeBoard(game->board);

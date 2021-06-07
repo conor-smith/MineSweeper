@@ -11,6 +11,7 @@ typedef struct MineSweeperGame Game;
  * Prints to stdout if an invalid entry is given (eg, more mines than tiles, negative height value, etc)
  * When this happens, The offending parameter will be replaced with the nearest valid value (eg, -1 length = 1. -1 mines = 0) */
 Game* createGame(int length, int height, int mines);
+Game* createEmptyGame();
 
 //Frees memory
 void deleteGame(Game* game);

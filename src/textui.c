@@ -25,8 +25,7 @@ int getNumber(char *string) {
 
     addstr(string);
     refresh();
-
-    scanw(inputString);
+    getstr(inputString);
 
     return atoi(inputString);
 }
@@ -94,14 +93,12 @@ void setDifficulty(Game *game) {
         move(offset+noOfOptions+1, 0);
         echo();
         curs_set(1);
-        keypad(stdscr, false);
         int length = getNumber("Length: ");
         int height = getNumber("Height: ");
         int mines = getNumber("Mines: ");
         resetGame(game, length, height, mines);
         noecho();
         curs_set(0);
-        keypad(stdscr, true);
     }
 }
 
@@ -213,6 +210,7 @@ void gameLoop(Game *game) {
 
     // Game loop. Can only be exited through quitting the game
     while(true) {
+        beginGame:
         // Initialize game
         setDifficulty(game);
         GameCursor gameCursor = {0, 0};
@@ -248,7 +246,7 @@ void gameLoop(Game *game) {
                     break;
                 case 'v':
                     if(getYOrN(getHeight(game)+2, "Are you sure you want to reset?(y/n)")) {
-                        continue;
+                        goto beginGame;
                     }
                     break;
                 case 'q':

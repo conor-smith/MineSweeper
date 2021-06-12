@@ -200,7 +200,10 @@ Game* createGame(int length, int height, int mines) {
 }
 
 Game* createEmptyGame() {
-    return calloc(1, sizeof(Game));
+    Game* game = malloc(sizeof(Game));
+    game->board = malloc(1);
+    game->board[0] = malloc(1);
+    return game;
 }
 
 // Resets internals of existing game
@@ -225,6 +228,7 @@ state reveal(Game* game, int x, int y) {
     //If this is the first move, mines must be placed
     if(!game->gameStarted) {
         placeMines(game, x, y);
+        game->gameStarted = true;
     }
 
     if(game->board[x][y] == HIDDEN_MINE) {

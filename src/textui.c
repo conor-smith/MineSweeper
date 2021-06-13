@@ -20,14 +20,43 @@ typedef struct {
     int x,y;
 } GameCursor;
 
+// Doesn't allow numbers above 99
 int getNumber(char *string) {
-    char inputString[5];
-
     addstr(string);
-    refresh();
-    getstr(inputString);
 
-    return atoi(inputString);
+    int cursor = 0;
+    char input = 0;
+    char inputNumber[] = {0,0};
+    // 10 = value of enter key
+    while(input != 10) {
+        input = getch();
+
+        if(input >= '0' && input <= '9' && cursor < 2) {
+            // Mimics echo(), but only for numeric characters
+            addch(input);
+            inputNumber[cursor] = input;
+            cursor++;
+        // 127 = numeric value of backspace. This deletes a character
+        } else if(input == 127 && cursor > 0) {
+            int x, y;
+            getyx(stdscr, y, x);
+            move(y, x-1);
+            delch();
+            inputNumber[cursor] = 0;
+            cursor--;
+        }
+    }
+    addch('\n');
+
+    switch(cursor) {
+        case 1:
+            return inputNumber[0] - '0';
+        case 2:
+            return (inputNumber[0] - '0') * 10 + (inputNumber[1] - '0');
+        default:
+            //Just here to make the compiler happy
+            return 0;
+    }
 }
 
 void setDifficulty(Game *game) {
@@ -91,13 +120,12 @@ void setDifficulty(Game *game) {
         resetGame(game, inputs->length, inputs->height, inputs->mines);
     } else {
         move(offset+noOfOptions+1, 0);
-        echo();
         curs_set(1);
         int length = getNumber("Length: ");
         int height = getNumber("Height: ");
         int mines = getNumber("Mines: ");
+        erase();
         resetGame(game, length, height, mines);
-        noecho();
         curs_set(0);
     }
 }
@@ -129,8 +157,7 @@ chtype getCharacter(tile value, state gameState) {
                             return ' ';
                             break;
                         default:
-                            // 48 is the ASCII value for '0'
-                            return ((char)value-REVEALED_0+48) | COLOR_PAIR(YELLOW);
+                            return ((char)value-REVEALED_0+'0') | COLOR_PAIR(YELLOW);
                             break;
                     }
                 default:

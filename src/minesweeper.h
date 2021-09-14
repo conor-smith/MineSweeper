@@ -13,11 +13,14 @@ typedef struct MineSweeperGame Game;
 Game* createGame(int length, int height, int mines);
 Game* createEmptyGame();
 
+//Creates new game using existing game struct
+void newGame(Game* game, int length, int height, int mines);
+
+//Recreates board exactly as it was before. Ignores if game hasn't been initialized
+void resetGame(Game* game);
+
 //Frees memory
 void deleteGame(Game* game);
-
-//Resets board in existing game
-void resetGame(Game* game, int length, int height, int mines);
 
 /* Used to play the game
  * The board will not be built until the first reveal occurs
@@ -27,13 +30,13 @@ void resetGame(Game* game, int length, int height, int mines);
 state reveal(Game* game, int x, int y);
 void flag(Game* game, int x, int y);
 
-//Returns game metadata
+//Returns game data. In java, these would be getters
 int getLength(Game* game);
 int getHeight(Game* game);
 int getMines(Game* game);
 int getFlagged(Game* game);
 int getRevealed(Game* game);
-bool getGameStarted(Game* game);
+bool getInitialised(Game* game);
 state getGameState(Game* game);
 tile** getBoard(Game* game);
 

@@ -8,7 +8,7 @@ typedef struct MineSweeperGame {
     int length, height, mines, flagged, revealed;
     tile** board;
     state gameState;
-    bool gameStarted;
+    bool initialised;
 } Game;
 
 // This is only for internal use. Exists to make things easier
@@ -32,7 +32,7 @@ tile** createBoard(int length, int height) {
     return board;
 }
 
-// Frees the board specifically
+// Frees the board specifically. Not the game object
 void freeBoard(tile** board) {
     free(board[0]);
     free(board);
@@ -44,7 +44,7 @@ bool moveIsWithinBoundaries(Game* game, int x, int y) {
 }
 
 // Takes an empty game object, and sets up internals
-void initializeGame(Game* game, int length, int height, int mines) {
+void setUpGame(Game* game, int length, int height, int mines) {
     length = length >= 1 ? length : 1;
     height = height >= 1 ? height : 1;
     mines = mines >= 0 ? mines : 0;
@@ -56,7 +56,7 @@ void initializeGame(Game* game, int length, int height, int mines) {
     game->flagged = 0;
     game->revealed = 0;
     game->gameState = ACTIVE;
-    game->gameStarted = false;
+    game->initialised = false;
     game->board = createBoard(length, height);
 }
 
@@ -81,9 +81,6 @@ void getSurroundingPositions(Position* data, Game* game, int x, int y) {
 /* An implementation of the fisher yates shuffle
  * Shuffles elements in data array inbetween start and end*/
 void shuffle(Position* data, int start, int end) {
-
-    srand(time(0));
-
     for(int i = end - 1;i > start;i--) {
         int indexToSwap = rand() % (end - start) + start;
         Position swap = data[i];
@@ -106,6 +103,7 @@ bool contains(Position* positions, int x, int y) {
 
 /* This essentially places all tiles in a 1Dimensional array, shuffles them, then assigns mines sequentially until none remain
  * This only occurs after the first move. The board is essentially empty before this
+ * This will also occur before the first move if the game has been reset
  * The selected tile (x, y) is placed at the end of the array, surrounding tiles before, then all other tiles first
  * Each of these "sections" are shuffled individually. They are marked by surroundingStart and surroundingEnd
  * This ensures that the selected tile, and those immediately surrounding, are the last to be made mines*/
@@ -194,22 +192,33 @@ void revealAll(Game* game, int x, int y) {
 Game* createGame(int length, int height, int mines) {
     Game* game = malloc(sizeof(Game));
 
-    initializeGame(game, length, height, mines);
+    setUpGame(game, length, height, mines);
 
     return game;
 }
 
 Game* createEmptyGame() {
+    //Just sets up some empty data. This prevents dereferencing a null pointer later
     Game* game = malloc(sizeof(Game));
     game->board = malloc(1);
     game->board[0] = malloc(1);
     return game;
 }
 
-// Resets internals of existing game
-void resetGame(Game* game, int length, int height, int mines) {
+// Complete reset of game
+void newGame(Game* game, int length, int height, int mines) {
     freeBoard(game->board);
-    initializeGame(game, length, height, mines);
+    setUpGame(game, length, height, mines);
+}
+
+void resetGame(Game* game) {
+    if(game->initialised) {
+        for(int i = 0;i < game->length;i++) {
+            for(int j = 0;j < game->height;j++) {
+                game->board[i][j] = game->board[i][j] - (game->board[i][j] / 10 * 10);
+            }
+        }
+    }
 }
 
 // Frees all memory associated with game
@@ -225,10 +234,10 @@ state reveal(Game* game, int x, int y) {
         return game->gameState;
     }
 
-    //If this is the first move, mines must be placed
-    if(!game->gameStarted) {
+    //Mines may not have been placed yet
+    if(!game->initialised) {
         placeMines(game, x, y);
-        game->gameStarted = true;
+        game->initialised = true;
     }
 
     if(game->board[x][y] == HIDDEN_MINE) {
@@ -282,8 +291,8 @@ int getFlagged(Game* game) {
 int getRevealed(Game* game) {
     return game->revealed;
 }
-bool getGameStarted(Game* game) {
-    return game->gameStarted;
+bool getInitialised(Game* game) {
+    return game->initialised;
 }
 state getGameState(Game* game) {
     return game->gameState;

@@ -117,7 +117,7 @@ void setDifficulty(Game *game) {
 
     if(selectedOption < noOfOptions-1) {
         struct Inputs *inputs = inputOptions + selectedOption;
-        resetGame(game, inputs->length, inputs->height, inputs->mines);
+        newGame(game, inputs->length, inputs->height, inputs->mines);
     } else {
         move(offset+noOfOptions+1, 0);
         curs_set(1);
@@ -125,7 +125,7 @@ void setDifficulty(Game *game) {
         int height = getNumber("Height: ");
         int mines = getNumber("Mines: ");
         erase();
-        resetGame(game, length, height, mines);
+        newGame(game, length, height, mines);
         curs_set(0);
     }
 }

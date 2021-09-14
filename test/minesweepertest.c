@@ -148,6 +148,23 @@ void test_canFlagTilesBeforeGame(void) {
     deleteGame(game);
 }
 
+void test_gameCanBeReset(void) {
+    Game* game = createGame(5, 5, 16);
+
+    reveal(game, 2, 2);
+    flag(game, 0, 0);
+
+    tile** board = getBoard(game);
+
+    TEST_ASSERT(board[2][2] == REVEALED_0);
+
+    resetGame(game);
+
+    TEST_ASSERT(board[2][2] == HIDDEN_0);
+    TEST_ASSERT(board[0][0] == HIDDEN_MINE);
+    TEST_ASSERT(board[4][4] == HIDDEN_MINE);
+}
+
 int main(void) {
     UNITY_BEGIN();
 
@@ -161,6 +178,7 @@ int main(void) {
     RUN_TEST(test_surroundingRevealAreNotMinesOnWall);
     RUN_TEST(test_surroundingRevealAreNotMinesOnCorner);
     RUN_TEST(test_canFlagTilesBeforeGame);
+    RUN_TEST(test_gameCanBeReset);
 
     return UNITY_END();
 }

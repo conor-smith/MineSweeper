@@ -1,18 +1,29 @@
-CC=gcc
-DEGUGFLAGS=-g -Wall
-LIB=libraries
-SRC=src
-TEST=test
-BIN=bin
+CC = gcc
+PROG = MineSweeper
+DEBUGFLAGS = -g
+BIN = bin
+SRC = src
 
-$(BIN)/textui : $(SRC)/textui.c $(SRC)/minesweeper.c
-	$(CC) $(DEGUGFLAGS) -lncurses -o $@ $^
+all: $(PROG)
 
-test: $(BIN)/minesweepertest
-	./$^
+$(PROG): $(BIN)/minesweeper.o $(BIN)/init.o $(BIN)/main.o $(BIN)/input.o
+	$(CC) -o $@ $^ `sdl2-config --libs` -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lm
 
-$(BIN)/minesweepertest: $(LIB)/unity.c $(TEST)/minesweepertest.c $(SRC)/minesweeper.c
-	$(CC) $(DEGUGFLAGS) -I $(LIB) -I $(SRC) -o $@ $^
+$(BIN)/init.o: $(SRC)/init.c
+	@mkdir -p $(BIN)
+	$(CC) -o $@ $^ -c `sdl2-config --cflags`
+
+$(BIN)/main.o: $(SRC)/main.c
+	@mkdir -p $(BIN)
+	$(CC) -o $@ $^ -c `sdl2-config --cflags`
+
+$(BIN)/minesweeper.o: $(SRC)/minesweeper.c
+	@mkdir -p $(BIN)
+	$(CC) -o $@ $^ -c `sdl2-config --cflags`
+
+$(BIN)/input.o: $(SRC)/input.c
+	@mkdir -p $(BIN)
+	$(CC) -o $@ $^ -c `sdl2-config --cflags`
 
 clean:
-	rm $(BIN)/*
+	rm -rf $(BIN) $(PROG)

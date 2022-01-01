@@ -10,6 +10,9 @@
 
 App app;
 
+SDL_Texture *unselectedTile;
+SDL_Texture *selectedTile;
+
 int main(void) {
     atexit(cleanup);
 

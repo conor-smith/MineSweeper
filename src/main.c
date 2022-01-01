@@ -6,6 +6,7 @@
 #include "minesweeper.h"
 #include "init.h"
 #include "input.h"
+#include "draw.h"
 
 App app;
 
@@ -16,6 +17,8 @@ int main(void) {
 
     while(1) {
         handleInput();
+
+        drawScene();
 
         SDL_Delay(16);
     }

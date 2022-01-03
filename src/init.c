@@ -8,8 +8,7 @@
 
 extern App app;
 
-extern SDL_Texture *selectedTile;
-extern SDL_Texture *unselectedTile;
+extern SDL_Texture *texture
 
 SDL_Texture *loadTexture(char *filename) {
 	SDL_Texture *texture;
@@ -39,8 +38,7 @@ void initSDL(void) {
 
     IMG_Init(IMG_INIT_PNG);
 
-    selectedTile = loadTexture("img/tile.png");
-    unselectedTile = loadTexture("img/tile2.png");
+    texture = loadTexture("img/textures.png");
 }
 
 void cleanup(void) {

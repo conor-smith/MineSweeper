@@ -33,7 +33,7 @@ void drawTile(int x, int y, tile t, bool selected) {
 	src.h = 32;
 
 	if(t < 20) {
-		src.x = selected ? 320 : 288;
+		src.x = selected && app.mouseDown ? 320 : 288;
 
 		SDL_RenderCopy(app.renderer, texture, &src, &dest);
 

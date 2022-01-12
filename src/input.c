@@ -4,9 +4,11 @@
 #include "minesweeper.h"
 #include "globals.h"
 
-void mapToBoard(void) {
-    if( app.x < xBorder || app.x > xBorder + tileSize * getLength(app.game) ||
-        app.y < yBorder || app.y > yBorder + tileSize * getHeight(app.game)) {
+void getMouseState(void) {
+    SDL_GetMouseState(&app.x, &app.y);
+
+    if( app.x < xBorder || app.x > xEndBorder ||
+        app.y < yBorder || app.y > yEndBorder) {
 
         app.x = -1;
 
@@ -16,32 +18,36 @@ void mapToBoard(void) {
     }
 }
 
-bool handleInput(void) {
+void handleInput(void) {
     SDL_Event event;
-    bool toReturn = false;
 
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
             case SDL_QUIT:
                 exit(0);
             case SDL_MOUSEMOTION:
-                SDL_GetMouseState(&app.x, &app.y);
+                getMouseState();
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                app.mouseDown = true;
-                SDL_GetMouseState(&app.x, &app.y);
+                if(event.button.button == SDL_BUTTON_LEFT) {
+                    app.mouseDown = true;
+                    getMouseState();
+                }
                 break;
             case SDL_MOUSEBUTTONUP:
-                app.mouseDown = false;
-                toReturn = true;
-                SDL_GetMouseState(&app.x, &app.y);
+                if(event.button.button == SDL_BUTTON_LEFT) {
+                    app.mouseDown = false;
+                    getMouseState();
+
+                    reveal(app.game, app.x, app.y);
+                } else if(event.button.button == SDL_BUTTON_RIGHT) {
+                    getMouseState();
+
+                    flag(app.game, app.x, app.y);
+                }
                 break;
             default:
                 break;
         }
     }
-
-    mapToBoard();
-
-    return toReturn;
 }

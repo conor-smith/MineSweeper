@@ -10,7 +10,7 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_Window *window;
     Game *game;
-    bool mouseDown;
+    bool mouseDown, flagged;
     int x, y;
 } App;
 

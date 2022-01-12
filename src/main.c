@@ -16,11 +16,7 @@ int main(void) {
 
     drawScene();
     while(1) {
-        bool playerClicked = handleInput();
-
-        if(playerClicked && app.x != -1) {
-            reveal(app.game, app.x, app.y);
-        }
+        handleInput();
 
         drawSceneIfChange();
 

@@ -7,21 +7,23 @@
 #include "init.h"
 #include "input.h"
 #include "draw.h"
-
-App app;
-
-SDL_Texture *texture;
+#include "globals.h"
 
 int main(void) {
     atexit(cleanup);
 
-    initSDL();
+    init();
 
     drawScene();
-
     while(1) {
-        handleInput();
+        bool playerClicked = handleInput();
 
-        SDL_Delay(16);
+        if(playerClicked && app.x != -1) {
+            reveal(app.game, app.x, app.y);
+        }
+
+        drawSceneIfChange();
+
+        SDL_Delay(6);
     }
 }

@@ -19,7 +19,7 @@ $(BIN)/main.o: $(SRC)/main.c
 
 $(BIN)/minesweeper.o: $(SRC)/minesweeper.c
 	@mkdir -p $(BIN)
-	$(CC) -o $@ $^ -c `sdl2-config --cflags`
+	$(CC) -o $@ $^  -c
 
 $(BIN)/input.o: $(SRC)/input.c
 	@mkdir -p $(BIN)
@@ -29,5 +29,12 @@ $(BIN)/draw.o: $(SRC)/draw.c
 	@mkdir -p $(BIN)
 	$(CC) -o $@ $^ -c `sdl2-config --cflags`
 
+$(BIN)/textui.o: $(SRC)/textui.c
+	@mkdir -p $(BIN)
+	$(CC) -o $@ $^ -c
+
+textui: $(BIN)/minesweeper.o $(BIN)/textui.o
+	$(CC) -o $@ $^  -lncurses
+
 clean:
-	rm -rf $(BIN) $(PROG)
+	rm -rf $(BIN) $(PROG) textui

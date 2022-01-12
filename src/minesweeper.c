@@ -190,6 +190,8 @@ void revealAll(Game* game, int x, int y) {
 
 // Creates a new game
 Game* createGame(int length, int height, int mines) {
+    srand(time(NULL));
+
     Game* game = malloc(sizeof(Game));
 
     setUpGame(game, length, height, mines);

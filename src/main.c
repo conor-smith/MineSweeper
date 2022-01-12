@@ -7,7 +7,6 @@
 #include "init.h"
 #include "input.h"
 #include "draw.h"
-#include "globals.h"
 
 int main(void) {
     atexit(cleanup);
@@ -20,6 +19,6 @@ int main(void) {
 
         drawSceneIfChange();
 
-        SDL_Delay(6);
+        SDL_Delay(4);
     }
 }

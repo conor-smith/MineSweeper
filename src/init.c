@@ -5,24 +5,18 @@
 
 #include "structs.h"
 #include "minesweeper.h"
-#include "globals.h"
 
-int xBorder;
-int yBorder;
-int tileSize;
-int xEndBorder;
-int yEndBorder;
-SDL_Texture *texture;
 App app;
 
-void setUpGlobals(void) {
-    xBorder = 10;
-    yBorder = 10;
-    tileSize = 32;
-    xEndBorder = xBorder + (tileSize * getLength(app.game));
-    yEndBorder = yBorder + (tileSize * getHeight(app.game));
+void setUpWindowMetadata(void) {
+    app.info.boardXBegin = 10;
+    app.info.boardYBegin = 10;
+    app.info.tileSize = 32;
+    app.info.boardXEnd = app.info.boardXBegin + (app.info.tileSize * getLength(app.game));
+    app.info.boardYEnd = app.info.boardYBegin + (app.info.tileSize * getHeight(app.game));
 }
 
+// Just a big ol' grand initialization of everything
 void init(void) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("couldn't initialize SDL: %s\n", SDL_GetError());
@@ -31,10 +25,10 @@ void init(void) {
 
     app.game = createGame(16, 16, 40);
     
-    setUpGlobals();
+    setUpWindowMetadata();
 
-    int width = getLength(app.game) * tileSize + xBorder * 2;
-    int height = getHeight(app.game) * tileSize + yBorder * 2;
+    int width = getLength(app.game) * app.info.tileSize + app.info.boardXBegin * 2;
+    int height = getHeight(app.game) * app.info.tileSize + app.info.boardYBegin * 2;
 
     app.window = SDL_CreateWindow(
         "MineSweeper", // Window title
@@ -45,9 +39,9 @@ void init(void) {
     app.renderer = SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     IMG_Init(IMG_INIT_PNG);
-    texture = IMG_LoadTexture(app.renderer, "img/textures.png");
+    app.info.texture = IMG_LoadTexture(app.renderer, "img/textures.png");
 
-    if(texture == NULL) {
+    if(app.info.texture == NULL) {
         printf("%s\n", SDL_GetError());
         exit(1);
     }

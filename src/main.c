@@ -10,18 +10,17 @@
 
 App app;
 
-SDL_Texture *unselectedTile;
-SDL_Texture *selectedTile;
+SDL_Texture *texture;
 
 int main(void) {
     atexit(cleanup);
 
     initSDL();
 
+    drawScene();
+
     while(1) {
         handleInput();
-
-        drawScene();
 
         SDL_Delay(16);
     }

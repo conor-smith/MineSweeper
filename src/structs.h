@@ -10,7 +10,7 @@ typedef struct {
     bool mouseDown, updateScreen;
     int mouseX, mouseY;
     int boardXBegin, boardXEnd, boardYBegin, boardYEnd, tileSize;
-    SDL_Texture *texture;
+    SDL_Texture *texture, *analogue;
 } WindowInfo;
 
 typedef struct {

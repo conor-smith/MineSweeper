@@ -4,7 +4,7 @@
 #include "enums.h"
 #include "minesweeper.h"
 
-#define TEXTURE_OFFSET 32
+#define TEXTURE_OFFSET 32 // Applies to both board and analogue
 
 extern App app;
 
@@ -24,6 +24,24 @@ int oldX, oldY;
 void mapToWindow(int *x, int *y) {
 	*x = (*x * app.info.tileSize) + app.info.boardXBegin;
 	*y = (*y * app.info.tileSize) + app.info.boardYBegin; 
+}
+
+void drawAnalogue(int value, int x, int y) {
+	SDL_SetRenderDrawColor(app.renderer, 70, 0, 0, 255);
+
+	SDL_Rect display = {x, y, 96, 64};
+
+	SDL_RenderFillRect(app.renderer, &display);
+
+	for(int i = 2;i >= 0;i--) {
+		int valueToPrint = value % 10;
+		value = value / 10;
+
+		SDL_Rect src = {valueToPrint * TEXTURE_OFFSET, 0, 32, 64};
+		SDL_Rect dest = {x + i * TEXTURE_OFFSET, y, 32, 64};
+
+		SDL_RenderCopy(app.renderer, app.info.analogue, &src, &dest);
+	}
 }
 
 // This draws a grid over the top of the window
@@ -104,6 +122,8 @@ void drawScene() {
 	}
 
 	drawGrid();
+
+	drawAnalogue(124, 10, 10);
 	
     SDL_RenderPresent(app.renderer);
 }

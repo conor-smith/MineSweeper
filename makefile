@@ -6,7 +6,7 @@ SRC = src
 
 all: $(PROG)
 
-$(PROG): $(BIN)/minesweeper.o $(BIN)/init.o $(BIN)/main.o $(BIN)/input.o $(BIN)/draw.o $(BIN)/window.o
+$(PROG): $(BIN)/minesweeper.o $(BIN)/init.o $(BIN)/main.o $(BIN)/input.o $(BIN)/draw.o $(BIN)/window.o $(BIN)/time_ln.o
 	$(CC) $(DEBUGFLAGS) -o $@ $^ `sdl2-config --libs` -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lm
 
 $(BIN)/init.o: $(SRC)/init.c
@@ -29,13 +29,17 @@ $(BIN)/draw.o: $(SRC)/draw.c
 	@mkdir -p $(BIN)
 	$(CC) $(DEBUGFLAGS) -o $@ $^ -c `sdl2-config --cflags`
 
-$(BIN)/textui.o: $(SRC)/textui.c
-	@mkdir -p $(BIN)
-	$(CC) $(DEBUGFLAGS) -o $@ $^ -c
-
 $(BIN)/window.o: $(SRC)/window.c
 	@mkdir -p $(BIN)
 	$(CC) $(DEBUGFLAGS) -o $@ $^ -c `sdl2-config --cflags`
+
+$(BIN)/time_ln.o: $(SRC)/time_ln.c
+	@mkdir -p $(BIN)
+	$(CC) $(DEBUGFLAGS) -o $@ $^ -c `sdl2-config --cflags`
+
+$(BIN)/textui.o: $(SRC)/textui.c
+	@mkdir -p $(BIN)
+	$(CC) $(DEBUGFLAGS) -o $@ $^ -c
 
 textui: $(BIN)/minesweeper.o $(BIN)/textui.o
 	$(CC) $(DEBUGFLAGS) -o $@ $^  -lncurses

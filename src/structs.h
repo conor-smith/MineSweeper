@@ -18,6 +18,7 @@ typedef struct {
     SDL_Window *window;
     Game *game;
     WindowInfo info;
+    long startTime;
 } App;
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "structs.h"
 #include "minesweeper.h"
+#include "time_ms.h"
 
 extern App app;
 
@@ -47,6 +48,11 @@ void handleInput(void) {
                     // If the left button is raised, we must reveal the tile under the mouse
                     app.info.mouseDown = false;
                     getMouseBoardCoordinates();
+
+                    // If this is the first move, start the timer
+                    if(!getInitialised(app.game) && app.info.mouseX != -1) {
+                        app.startTime = getCurrentTime();
+                    }
 
                     reveal(app.game, app.info.mouseX, app.info.mouseY);
                 } else if(event.button.button == SDL_BUTTON_RIGHT) {

@@ -3,6 +3,7 @@
 #include "structs.h"
 #include "enums.h"
 #include "minesweeper.h"
+#include "time_ms.h"
 
 #define TEXTURE_OFFSET 32 // Applies to both board and analogue
 
@@ -18,7 +19,7 @@ SDL_Rect xTile = {TEXTURE_OFFSET * 12, 0, TEXTURE_OFFSET, TEXTURE_OFFSET};
 
 /* These keep track of the mouse on the board
  * if the player is holding down the mouse, these ensure the board will only be refreshed when the mouse is moved*/
-int oldX, oldY;
+int oldX, oldY, timer;
 
 // This function maps the minesweeper board co-ordinates to the window co-ordinates
 void mapToWindow(int *x, int *y) {
@@ -77,29 +78,27 @@ void drawTile(int x, int y, tile t, bool mouseOver) {
 	src.w = TEXTURE_OFFSET;
 	src.h = TEXTURE_OFFSET;
 
-	if(t < 20) {
+	if(getGameState(app.game) == LOSS && t == HIDDEN_MINE) {
+		SDL_RenderCopy(app.renderer, app.info.texture, &mine, &dest);
+	} else if(t < REVEALED_0) {
 		if(mouseOver && app.info.mouseDown) {
 			SDL_RenderCopy(app.renderer, app.info.texture, &selectedTile, &dest);
 		} else {
 			SDL_RenderCopy(app.renderer, app.info.texture, &unselectedTile, &dest);
 		}
 
-		if(t < 20 && t >= 10) {
+		if(t >= FLAGGED_0) {
 			SDL_RenderCopy(app.renderer, app.info.texture, &flaggedTile, &dest);
 
 			if(getGameState(app.game) == LOSS && t != FLAGGED_MINE) {
 				SDL_RenderCopy(app.renderer, app.info.texture, &xTile, &dest);
 			}
 		}
-
-		if(getGameState(app.game) == LOSS && t == HIDDEN_MINE) {
-			SDL_RenderCopy(app.renderer, app.info.texture, &mine, &dest);
-		}
-	} else if(t > 20 && t < REVEALED_MINE) {
-		src.x = (t - 21) * TEXTURE_OFFSET;
+	} else if(t > REVEALED_0 && t < REVEALED_MINE) {
+		src.x = (t - REVEALED_1) * TEXTURE_OFFSET;
 
 		SDL_RenderCopy(app.renderer, app.info.texture, &src, &dest);
-	} else if(t == REVEALED_MINE && getGameState(app.game) == LOSS) {
+	} else if(t == REVEALED_MINE) {
 		SDL_RenderCopy(app.renderer, app.info.texture, &mine, &dest);
 		SDL_RenderCopy(app.renderer, app.info.texture, &xTile, &dest);
 	}
@@ -108,6 +107,8 @@ void drawTile(int x, int y, tile t, bool mouseOver) {
 void drawScene() {
 	oldX = app.info.mouseX;
 	oldY = app.info.mouseY;
+	timer = app.startTime == -1 ? 0 : (getCurrentTime() - app.startTime) / 1000;
+	app.info.updateScreen = false;
 
     SDL_SetRenderDrawColor(app.renderer, 192, 192, 192, 255);
 
@@ -123,13 +124,21 @@ void drawScene() {
 
 	drawGrid();
 
-	drawAnalogue(124, 10, 10);
+	// Number of unflagged mines left
+	int unflaggedMines = getMines(app.game) - getFlagged(app.game);
+	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, 10, 26);
+
+	//Timer
+	drawAnalogue(timer, app.info.boardXEnd - 96, 26);
 	
     SDL_RenderPresent(app.renderer);
 }
 
 void drawSceneIfChange() {
-	if(oldX != app.info.mouseX || oldY != app.info.mouseY || app.info.updateScreen) {
+	bool updateTime = getGameState(app.game) == ACTIVE && app.startTime != -1 && timer < 999 && timer != (getCurrentTime() - app.startTime) / 1000;
+	bool updateHeldDownMouse = (oldX != app.info.mouseX || oldY != app.info.mouseY) && app.info.mouseDown;
+
+	if( app.info.updateScreen || updateHeldDownMouse || updateTime) {
 		drawScene();
 	}
 }

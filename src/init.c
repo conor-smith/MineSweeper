@@ -52,6 +52,7 @@ void init(void) {
     IMG_Init(IMG_INIT_PNG);
 
     app.game = createGame(16, 16, 40);
+    app.startTime = -1;
     
     setUpWindowMetadata();
 

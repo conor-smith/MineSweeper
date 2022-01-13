@@ -8,12 +8,14 @@
 #include "input.h"
 #include "draw.h"
 
+extern App app;
+
 int main(void) {
     atexit(cleanup);
 
     init();
 
-    drawScene();
+    app.info.updateScreen = true;
     while(1) {
         handleInput();
 

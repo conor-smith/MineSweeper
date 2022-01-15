@@ -2,6 +2,5 @@
 #define DRAW_H
 
 void drawScene();
-void drawSceneIfChange();
 
 #endif

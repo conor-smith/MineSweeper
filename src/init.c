@@ -5,17 +5,21 @@
 
 #include "structs.h"
 #include "minesweeper.h"
-#include "window.h"
+#include "defs.h"
 
 App app;
 
+void getWindowSize(int *length, int *height) {
+    *length = app.info.boardXEnd + PADDING;
+    *length = *length < MIN_WINDOW_WIDTH ? MIN_WINDOW_WIDTH : *length;
+
+    *height = app.info.boardYEnd + PADDING;
+}
+
 // This must be called after the game is initialized
 void setUpWindowMetadata(void) {
-    app.info.boardXBegin = BORDER;
-    app.info.boardYBegin = BANNER_HEIGHT;
-    app.info.tileSize = 32;
-    app.info.boardXEnd = app.info.boardXBegin + (app.info.tileSize * getLength(app.game));
-    app.info.boardYEnd = app.info.boardYBegin + (app.info.tileSize * getHeight(app.game));
+    app.info.boardXEnd = PADDING + (TILE_SIZE * getLength(app.game));
+    app.info.boardYEnd = BOARD_Y_START + (TILE_SIZE * getHeight(app.game));
 }
 
 // THis also must be called after metadata initialization

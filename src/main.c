@@ -15,11 +15,12 @@ int main(void) {
 
     init();
 
-    app.info.updateScreen = true;
+    drawScene();
     while(1) {
-        handleInput();
 
-        drawSceneIfChange();
+        if(handleInput() || updateTimer()) {
+            drawScene();
+        }
 
         SDL_Delay(4);
     }

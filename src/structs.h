@@ -7,9 +7,9 @@
 #include "minesweeper.h"
 
 typedef struct {
-    bool mouseDown, updateScreen;
+    bool mouseDown;
     int mouseX, mouseY;
-    int boardXBegin, boardXEnd, boardYBegin, boardYEnd, tileSize;
+    int boardXEnd, boardYEnd;
     SDL_Texture *texture, *analogue;
 } WindowInfo;
 
@@ -19,6 +19,7 @@ typedef struct {
     Game *game;
     WindowInfo info;
     long startTime;
+    int timer;
 } App;
 
 #endif

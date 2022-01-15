@@ -3,7 +3,7 @@
 #include "structs.h"
 #include "enums.h"
 #include "minesweeper.h"
-#include "time_ms.h"
+#include "defs.h"
 
 #define TEXTURE_OFFSET 32 // Applies to both board and analogue
 
@@ -17,14 +17,10 @@ SDL_Rect selectedTile = {TEXTURE_OFFSET * 10, 0, TEXTURE_OFFSET, TEXTURE_OFFSET}
 SDL_Rect mine = {TEXTURE_OFFSET * 11, 0, TEXTURE_OFFSET, TEXTURE_OFFSET};
 SDL_Rect xTile = {TEXTURE_OFFSET * 12, 0, TEXTURE_OFFSET, TEXTURE_OFFSET};
 
-/* These keep track of the mouse on the board
- * if the player is holding down the mouse, these ensure the board will only be refreshed when the mouse is moved*/
-int oldX, oldY, timer;
-
 // This function maps the minesweeper board co-ordinates to the window co-ordinates
 void mapToWindow(int *x, int *y) {
-	*x = (*x * app.info.tileSize) + app.info.boardXBegin;
-	*y = (*y * app.info.tileSize) + app.info.boardYBegin; 
+	*x = (*x * TILE_SIZE) + PADDING;
+	*y = (*y * TILE_SIZE) + BOARD_Y_START;
 }
 
 void drawAnalogue(int value, int x, int y) {
@@ -50,13 +46,13 @@ void drawGrid() {
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 
 	for(int i = 0;i <= getLength(app.game);i++) {
-		int xPos = app.info.boardXBegin + (i * app.info.tileSize);
-		SDL_RenderDrawLine(app.renderer, xPos, app.info.boardYBegin, xPos, app.info.boardYEnd);
+		int xPos = PADDING + (i * TILE_SIZE);
+		SDL_RenderDrawLine(app.renderer, xPos, BOARD_Y_START, xPos, app.info.boardYEnd);
 	}
 
 	for(int i = 0;i <= getHeight(app.game);i++) {
-		int yPos = app.info.boardYBegin + (i * app.info.tileSize);
-		SDL_RenderDrawLine(app.renderer, app.info.boardXBegin, yPos, app.info.boardXEnd, yPos);
+		int yPos = BOARD_Y_START + (i * TILE_SIZE);
+		SDL_RenderDrawLine(app.renderer, PADDING, yPos, app.info.boardXEnd, yPos);
 	}
 }
 
@@ -68,8 +64,8 @@ void drawTile(int x, int y, tile t, bool mouseOver) {
 	SDL_Rect dest;
 	dest.x = x;
 	dest.y = y;
-	dest.w = app.info.tileSize;
-	dest.h = app.info.tileSize;
+	dest.w = TILE_SIZE;
+	dest.h = TILE_SIZE;
 
 	/* The texture within img/textures.png
 	 * This is only for numbers. It will not be used if it's a non-number tile*/
@@ -105,10 +101,6 @@ void drawTile(int x, int y, tile t, bool mouseOver) {
 }
 
 void drawScene() {
-	oldX = app.info.mouseX;
-	oldY = app.info.mouseY;
-	timer = app.startTime == -1 ? 0 : (getCurrentTime() - app.startTime) / 1000;
-	app.info.updateScreen = false;
 
     SDL_SetRenderDrawColor(app.renderer, 192, 192, 192, 255);
 
@@ -129,16 +121,7 @@ void drawScene() {
 	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, 10, 26);
 
 	//Timer
-	drawAnalogue(timer, app.info.boardXEnd - 96, 26);
+	drawAnalogue(app.timer, app.info.boardXEnd - 96, 26);
 	
     SDL_RenderPresent(app.renderer);
-}
-
-void drawSceneIfChange() {
-	bool updateTime = getGameState(app.game) == ACTIVE && app.startTime != -1 && timer < 999 && timer != (getCurrentTime() - app.startTime) / 1000;
-	bool updateHeldDownMouse = (oldX != app.info.mouseX || oldY != app.info.mouseY) && app.info.mouseDown;
-
-	if( app.info.updateScreen || updateHeldDownMouse || updateTime) {
-		drawScene();
-	}
 }

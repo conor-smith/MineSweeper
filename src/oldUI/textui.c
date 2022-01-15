@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <stdbool.h>
-#include "enums.h"
-#include "minesweeper.h"
+#include "../enums.h"
+#include "../minesweeper.h"
 
 // A couple of colour constants
 #define YELLOW  1

@@ -33,7 +33,7 @@ $(BIN)/time_ln.o: $(SRC)/time_ln.c
 	@mkdir -p $(BIN)
 	$(CC) $(DEBUGFLAGS) -o $@ $^ -c `sdl2-config --cflags`
 
-$(BIN)/textui.o: $(SRC)/textui.c
+$(BIN)/textui.o: $(SRC)/oldUI/textui.c
 	@mkdir -p $(BIN)
 	$(CC) $(DEBUGFLAGS) -o $@ $^ -c
 

@@ -28,11 +28,11 @@ SDL_Rect selectedFace = {F_TEXTURE_OFFSET * 5, 0, F_TEXTURE_OFFSET, F_TEXTURE_OF
 // This function maps the minesweeper board co-ordinates to the window co-ordinates
 void mapToWindow(int *x, int *y) {
 	*x = (*x * TILE_SIZE) + PADDING;
-	*y = (*y * TILE_SIZE) + BOARD_Y_START;
+	*y = (*y * TILE_SIZE) + app.info.boardYStart;
 }
 
 void drawFace() {
-	SDL_Rect dest = {app.info.faceXPosition, OPTIONS_BANNER + PADDING, F_TEXTURE_OFFSET, F_TEXTURE_OFFSET};
+	SDL_Rect dest = {app.info.faceXPosition, app.options.textHeight + PADDING, F_TEXTURE_OFFSET, F_TEXTURE_OFFSET};
 
 	SDL_Rect *background = (app.info.faceMouseOver && app.info.mouseDown) ? &selectedFace : &unselectedFace;
 
@@ -84,11 +84,11 @@ void drawGrid() {
 
 	for(int i = 0;i <= getLength(app.game);i++) {
 		int xPos = PADDING + (i * TILE_SIZE);
-		SDL_RenderDrawLine(app.renderer, xPos, BOARD_Y_START, xPos, app.info.boardYEnd);
+		SDL_RenderDrawLine(app.renderer, xPos, app.info.boardYStart, xPos, app.info.boardYEnd);
 	}
 
 	for(int i = 0;i <= getHeight(app.game);i++) {
-		int yPos = BOARD_Y_START + (i * TILE_SIZE);
+		int yPos = app.info.boardYStart + (i * TILE_SIZE);
 		SDL_RenderDrawLine(app.renderer, PADDING, yPos, app.info.boardXEnd, yPos);
 	}
 }
@@ -158,16 +158,28 @@ void drawScene() {
 
 	// Number of unflagged mines left
 	int unflaggedMines = getMines(app.game) - getFlagged(app.game);
-	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, 10, OPTIONS_BANNER + PADDING);
+	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, 10, app.options.textHeight + PADDING);
 
 	//Timer
-	drawAnalogue(app.timer, app.info.boardXEnd - 96, OPTIONS_BANNER + PADDING);
+	drawAnalogue(app.timer, app.info.boardXEnd - 96, app.options.textHeight + PADDING);
 
 	drawFace();
 
+	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
+	
+	SDL_Rect optionsBanner = {0, 0, app.info.boardXEnd + PADDING, app.options.textHeight};
+	SDL_RenderFillRect(app.renderer, &optionsBanner);
+
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 
-	SDL_RenderDrawLine(app.renderer, 0, OPTIONS_BANNER + DISPLAY_BANNER, app.info.boardXEnd + PADDING, OPTIONS_BANNER + DISPLAY_BANNER);
+	SDL_Rect textRect = {0, 0, 0, 0};
+	SDL_QueryTexture(app.options.gameb, NULL, NULL, &textRect.w, &textRect.h);
+	SDL_RenderCopy(app.renderer, app.options.gameb, NULL, &textRect);
+
+	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
+
+	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight, app.info.boardXEnd + PADDING, app.options.textHeight);
+	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight + DISPLAY_BANNER, app.info.boardXEnd + PADDING, app.options.textHeight + DISPLAY_BANNER);
 	
     SDL_RenderPresent(app.renderer);
 }

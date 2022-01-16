@@ -5,6 +5,5 @@
 
 void init(void);
 void cleanup(void);
-SDL_Texture *loadTexture(char *filename);
 
 #endif

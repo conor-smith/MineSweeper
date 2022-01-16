@@ -15,15 +15,15 @@ void getMouseBoardCoordinates(void) {
     SDL_GetMouseState(&x, &y);
         
     app.info.faceMouseOver = x > app.info.faceXPosition && x < app.info.faceXPosition + 64 &&
-        y > OPTIONS_BANNER + PADDING && y < OPTIONS_BANNER + PADDING + 64;
+        y > app.options.textHeight + PADDING && y < app.options.textHeight + PADDING + 64;
 
     if( x < PADDING || x > app.info.boardXEnd ||
-        y < BOARD_Y_START || y > app.info.boardYEnd) {
+        y < app.info.boardYStart || y > app.info.boardYEnd) {
 
         app.info.mouseX = -1;
     } else {
         app.info.mouseX = (x - PADDING) / TILE_SIZE;
-        app.info.mouseY = (y - BOARD_Y_START) / TILE_SIZE;
+        app.info.mouseY = (y - app.info.boardYStart) / TILE_SIZE;
     }
 }
 

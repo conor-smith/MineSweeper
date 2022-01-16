@@ -15,6 +15,7 @@ int main(void) {
 
     init();
 
+    SDL_Delay(1000);
     drawScene();
     while(1) {
 

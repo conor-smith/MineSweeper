@@ -217,7 +217,7 @@ void resetGame(Game* game) {
     if(game->initialised) {
         for(int i = 0;i < game->length;i++) {
             for(int j = 0;j < game->height;j++) {
-                game->board[i][j] = game->board[i][j] - (game->board[i][j] / 10 * 10);
+                game->board[i][j] = game->board[i][j] % 10;
             }
         }
     }
@@ -252,6 +252,10 @@ state reveal(Game* game, int x, int y) {
     }
 
     game->gameState = game->gameState + (game->revealed == game->length * game->height - game->mines);
+
+    if(game->gameState == WIN) {
+        game->flagged = game->mines;
+    }
 
     return game->gameState;
 }

@@ -7,10 +7,10 @@
 #include "minesweeper.h"
 
 typedef struct {
-    bool mouseDown;
+    bool mouseDown, faceMouseOver;
     int mouseX, mouseY;
-    int boardXEnd, boardYEnd;
-    SDL_Texture *texture, *analogue;
+    int boardXEnd, boardYEnd, faceXPosition;
+    SDL_Texture *texture, *analogue, *face;
 } WindowInfo;
 
 typedef struct {

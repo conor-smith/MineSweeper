@@ -6,26 +6,14 @@
 #include "structs.h"
 #include "minesweeper.h"
 #include "defs.h"
+#include "window.h"
 
 App app;
-
-void getWindowSize(int *length, int *height) {
-    *length = app.info.boardXEnd + PADDING;
-    *length = *length < MIN_WINDOW_WIDTH ? MIN_WINDOW_WIDTH : *length;
-
-    *height = app.info.boardYEnd + PADDING;
-}
-
-// This must be called after the game is initialized
-void setUpWindowMetadata(void) {
-    app.info.boardXEnd = PADDING + (TILE_SIZE * getLength(app.game));
-    app.info.boardYEnd = BOARD_Y_START + (TILE_SIZE * getHeight(app.game));
-}
 
 // THis also must be called after metadata initialization
 void setUpSDL(void) {
     int width, height;
-    getWindowSize(&width, &height);
+    getNewWindowSize(&width, &height);
 
     app.window = SDL_CreateWindow(
         "MineSweeper", // Window title
@@ -44,6 +32,7 @@ void setUpSDL(void) {
 void setUpTextures(void) {
     app.info.texture = IMG_LoadTexture(app.renderer, "img/textures.png");
     app.info.analogue = IMG_LoadTexture(app.renderer, "img/analogue.png");
+    app.info.face = IMG_LoadTexture(app.renderer, "img/face.png");
 }
 
 // Just a big ol' grand initialization of everything
@@ -57,8 +46,8 @@ void init(void) {
 
     app.game = createGame(16, 16, 40);
     app.startTime = -1;
-    
-    setUpWindowMetadata();
+
+    setNewPositionData();
 
     setUpSDL();
 
@@ -75,6 +64,9 @@ void cleanup(void) {
     SDL_DestroyRenderer(app.renderer);
 
     SDL_DestroyWindow(app.window);
+
+    SDL_DestroyTexture(app.info.texture);
+    SDL_DestroyTexture(app.info.analogue);
 
     deleteGame(app.game);
 }

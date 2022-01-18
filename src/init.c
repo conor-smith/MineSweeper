@@ -72,6 +72,9 @@ void init(void) {
     SDL_QueryTexture(app.options.intermediate, NULL, NULL, &app.options.buttonWidth, &app.options.textHeight);
     app.options.buttonWidth += MENU_PADDING * 2;
 
+    int throwAway;
+    SDL_QueryTexture(app.options.gameb, NULL, NULL, &app.options.gameButtonWidth, &throwAway);
+
     int infoWidth;
     SDL_QueryTexture(app.options.expertSpec, NULL, NULL, &infoWidth, &app.options.textHeight);
 

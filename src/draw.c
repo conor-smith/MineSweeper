@@ -109,7 +109,15 @@ void drawBanner() {
 	SDL_Rect optionsBanner = {0, 0, app.info.boardXEnd + PADDING, app.options.textHeight};
 	SDL_RenderFillRect(app.renderer, &optionsBanner);
 
-	drawText(0, 0, app.options.gameb);
+	if(app.info.gameButtonMouseOver) {
+		SDL_Rect highlighted = {0, 0, app.options.gameButtonWidth, app.options.textHeight};
+
+		SDL_SetRenderDrawColor(app.renderer, 0, 121, 197, 255);
+		SDL_RenderFillRect(app.renderer, &highlighted);
+		drawText(0, 0, app.options.gamew);
+	} else {
+		drawText(0, 0, app.options.gameb);
+	}
 }
 
 // This is for drawing either of the two 'analogue' displays
@@ -203,7 +211,7 @@ void drawScene() {
 
 	for(int i = 0;i < getLength(app.game);i++) {
 		for(int j = 0;j < getHeight(app.game); j++) {
-			drawTile(i, j, board[i][j], i == app.info.mouseX && j == app.info.mouseY);
+			drawTile(i, j, board[i][j], !app.info.menuOpen && i == app.info.mouseX && j == app.info.mouseY);
 		}
 	}
 
@@ -225,7 +233,9 @@ void drawScene() {
 	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight, app.info.boardXEnd + PADDING, app.options.textHeight);
 	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight + DISPLAY_BANNER, app.info.boardXEnd + PADDING, app.options.textHeight + DISPLAY_BANNER);
 
-	drawMenu();
+	if(app.info.menuOpen) {
+		drawMenu();
+	}
 	
     SDL_RenderPresent(app.renderer);
 }

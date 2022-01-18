@@ -12,10 +12,7 @@ static int oldX, oldY;
 /* This function translates the pixel x,y co-ordinates on screen
  * into x,y co-ordinates for the board
  * Also checks if the mouse is over the face*/
-void getMouseBoardCoordinates(void) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-        
+void getMouseBoardCoordinates(int x, int y) {
     app.info.faceMouseOver = x > app.info.faceXPosition && x < app.info.faceXPosition + 64 &&
         y > app.options.textHeight + PADDING && y < app.options.textHeight + PADDING + 64;
 
@@ -30,9 +27,18 @@ void getMouseBoardCoordinates(void) {
 }
 
 void handleMotion(bool *updateScreen) {
-    static bool oldFaceMouseOver;
+    static bool oldFaceMouseOver, oldGameButtonMouseOver;
 
-    getMouseBoardCoordinates();
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+
+    app.info.gameButtonMouseOver = x >= 0 && x < app.options.gameButtonWidth && y >= 0 && y < app.options.textHeight;
+    if(app.info.gameButtonMouseOver != oldGameButtonMouseOver) {
+        *updateScreen = true;
+        oldGameButtonMouseOver = app.info.gameButtonMouseOver;
+    }
+
+    getMouseBoardCoordinates(x, y);
 
     if(app.info.mouseDown) {
         if(oldX != app.info.mouseX || oldY != app.info.mouseY) {
@@ -48,19 +54,35 @@ void handleMotion(bool *updateScreen) {
 
 void handleLeftButtonDown(bool *updateScreen) {
     app.info.mouseDown = true;
-    getMouseBoardCoordinates();
 
-    oldX = app.info.mouseX;
-    oldY = app.info.mouseY;
-    *updateScreen = true;
+    if(!app.info.menuOpen) {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+
+        getMouseBoardCoordinates(x, y);
+
+        oldX = app.info.mouseX;
+        oldY = app.info.mouseY;
+        *updateScreen = true;
+    }
 }
 
 void handleLeftButtonUp() {
     // If the left button is raised, we must reveal the tile under the mouse
     app.info.mouseDown = false;
 
-    // If user clicks the face, reset game
-    if(app.info.faceMouseOver) {
+    int x, y;
+
+    if(app.info.menuOpen) {
+        SDL_GetMouseState(&x, &y);
+
+        if(!(x >= 0 && x < app.options.boxWidth && y >= app.options.textHeight && y < app.options.textHeight + app.options.boxHeight)) {
+            app.info.menuOpen = false;
+        }
+    } else if(app.info.gameButtonMouseOver) {
+        app.info.menuOpen = true;
+    } else if(app.info.faceMouseOver) {
+        // If user clicks the face, reset game
         app.startTime = -1;
         app.timer = 0;
         newGame(app.game, getLength(app.game), getHeight(app.game), getMines(app.game));
@@ -69,6 +91,9 @@ void handleLeftButtonUp() {
         if(!getInitialised(app.game) && app.info.mouseX != -1) {
             app.startTime = getCurrentTime();
         }
+
+        SDL_GetMouseState(&x, &y);
+        getMouseBoardCoordinates(x, y);
 
         reveal(app.game, app.info.mouseX, app.info.mouseY);
     }
@@ -90,7 +115,9 @@ bool handleInput(void) {
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
-                getMouseBoardCoordinates();
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                getMouseBoardCoordinates(x, y);
                 // For both the left and right mouse though, we must manually set the updateScreen field
                 switch(event.button.button) {
                     case SDL_BUTTON_LEFT:

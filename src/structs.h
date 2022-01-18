@@ -8,12 +8,12 @@
 
 typedef struct {
     SDL_Texture *gameb, *gamew, *beginner, *beginnerSpec, *intermediate, *intermediateSpec, *expert, *expertSpec;
-    int buttonWidth, textHeight, boxWidth, boxHeight, button1y, button2y, button3y;
+    int buttonWidth, textHeight, boxWidth, boxHeight, button1y, button2y, button3y, gameButtonWidth;
     bool visible, button1, button2, button3;
 } OptionsMenu;
 
 typedef struct {
-    bool mouseDown, faceMouseOver;
+    bool mouseDown,  menuOpen, faceMouseOver, menuMouseOver, gameButtonMouseOver;
     int mouseX, mouseY;
     int boardXEnd, boardYStart, boardYEnd, faceXPosition;
     SDL_Texture *texture, *analogue, *face;

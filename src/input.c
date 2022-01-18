@@ -4,6 +4,7 @@
 #include "minesweeper.h"
 #include "time_ms.h"
 #include "defs.h"
+#include "window.h"
 
 extern App app;
 
@@ -26,6 +27,36 @@ void getMouseBoardCoordinates(int x, int y) {
     }
 }
 
+void getButton(int x, int y, bool *updateScreen) {
+    static bool wasOverButton;
+
+    app.options.button1 = false;
+    app.options.button2 = false;
+    app.options.button3 = false;
+
+    if(x >= MENU_PADDING && x < MENU_PADDING + app.options.buttonWidth) {
+        if(y >= app.options.button1y && y < app.options.button2y) {
+            app.options.button1 = true;
+            *updateScreen = true;
+            wasOverButton = true;
+        } else if(y >= app.options.button2y && y < app.options.button3y) {
+            app.options.button2 = true;
+            *updateScreen = true;
+            wasOverButton = true;
+        } else if(y >= app.options.button3y && y < app.options.button3y + app.options.textHeight) {
+            app.options.button3 = true;
+            *updateScreen = true;
+            wasOverButton = true;
+        } else if(wasOverButton) {
+            wasOverButton = false;
+            *updateScreen = true;
+        }
+    } else if(wasOverButton) {
+        wasOverButton = false;
+        *updateScreen = true;
+    }
+}
+
 void handleMotion(bool *updateScreen) {
     static bool oldFaceMouseOver, oldGameButtonMouseOver;
 
@@ -36,6 +67,10 @@ void handleMotion(bool *updateScreen) {
     if(app.info.gameButtonMouseOver != oldGameButtonMouseOver) {
         *updateScreen = true;
         oldGameButtonMouseOver = app.info.gameButtonMouseOver;
+    }
+
+    if(app.info.menuOpen) {
+        getButton(x, y, updateScreen);
     }
 
     getMouseBoardCoordinates(x, y);
@@ -78,6 +113,20 @@ void handleLeftButtonUp() {
 
         if(!(x >= 0 && x < app.options.boxWidth && y >= app.options.textHeight && y < app.options.textHeight + app.options.boxHeight)) {
             app.info.menuOpen = false;
+        } else {
+            bool throwAway;
+            getButton(x, y, &throwAway);
+
+            if(app.options.button1) {
+                newGame(app.game, 9, 9, 16);
+                setNewWindowSize();
+            } else if(app.options.button2) {
+                newGame(app.game, 16, 16, 40);
+                setNewWindowSize();
+            } else if(app.options.button3) {
+                newGame(app.game, 30, 16, 99);
+                setNewWindowSize();
+            }
         }
     } else if(app.info.gameButtonMouseOver) {
         app.info.menuOpen = true;

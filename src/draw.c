@@ -59,6 +59,19 @@ void drawMenu() {
 
 	drawBox(menuBox);
 
+	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
+	SDL_Rect highlightedButton = {MENU_PADDING, 0, app.options.buttonWidth, app.options.textHeight};
+	if(app.options.button1) {
+		highlightedButton.y = app.options.button1y;
+		SDL_RenderFillRect(app.renderer, &highlightedButton);
+	} else if(app.options.button2) {
+		highlightedButton.y = app.options.button2y;
+		SDL_RenderFillRect(app.renderer, &highlightedButton);
+	} else if(app.options.button3) {
+		highlightedButton.y = app.options.button3y;
+		SDL_RenderFillRect(app.renderer, &highlightedButton);
+	}
+
 	buttonBox.y = app.options.button1y;
 	drawText(MENU_PADDING * 2, app.options.button1y, app.options.beginner);
 	drawText(MENU_PADDING * 2 + app.options.buttonWidth, app.options.button1y, app.options.beginnerSpec);

@@ -81,22 +81,9 @@ void init(void) {
     app.options.boxWidth = MENU_PADDING * 3 + app.options.buttonWidth + infoWidth;
     app.options.boxHeight = app.options.textHeight * 3 + MENU_PADDING * 2;
 
-    app.info.boardYStart = app.options.textHeight + DISPLAY_BANNER + PADDING;
-
-    app.options.visible = false;
-    app.options.button1 = false;
-    app.options.button2 = false;
-    app.options.button3 = false;
-
     app.options.button1y = app.options.textHeight + MENU_PADDING;
     app.options.button2y = app.options.textHeight * 2 + MENU_PADDING;
     app.options.button3y = app.options.textHeight * 3 + MENU_PADDING;
-
-    app.startTime = -1;
-    app.timer = 0;
-    app.info.boardXEnd = PADDING + (TILE_SIZE * getLength(app.game));
-    app.info.boardYEnd = app.info.boardYStart + (TILE_SIZE * getHeight(app.game));
-    app.info.faceXPosition = (app.info.boardXEnd + PADDING) / 2 - 32;
 
     setNewWindowSize();
 }

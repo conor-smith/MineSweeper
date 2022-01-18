@@ -53,7 +53,7 @@ void init(void) {
         exit(1);
     }
 
-    TTF_Font *sans = TTF_OpenFont("img/OpenSans-Regular.ttf", 20);
+    TTF_Font *sans = TTF_OpenFont("img/OpenSans-Bold.ttf", 20);
     SDL_Color black = {0, 0, 0};
     SDL_Color white = {255, 255, 255};
 
@@ -70,13 +70,13 @@ void init(void) {
 
     // Set up other data
     SDL_QueryTexture(app.options.intermediate, NULL, NULL, &app.options.buttonWidth, &app.options.textHeight);
-    app.options.buttonWidth += 10; // 5 pixel padding on either side of text
+    app.options.buttonWidth += MENU_PADDING * 2;
 
     int infoWidth;
     SDL_QueryTexture(app.options.expertSpec, NULL, NULL, &infoWidth, &app.options.textHeight);
 
-    app.options.boxWidth = 15 + app.options.buttonWidth + infoWidth;
-    app.options.boxHeight = app.options.textHeight + 10;
+    app.options.boxWidth = MENU_PADDING * 3 + app.options.buttonWidth + infoWidth;
+    app.options.boxHeight = app.options.textHeight * 3 + MENU_PADDING * 2;
 
     app.info.boardYStart = app.options.textHeight + DISPLAY_BANNER + PADDING;
 
@@ -84,6 +84,10 @@ void init(void) {
     app.options.button1 = false;
     app.options.button2 = false;
     app.options.button3 = false;
+
+    app.options.button1y = app.options.textHeight + MENU_PADDING;
+    app.options.button2y = app.options.textHeight * 2 + MENU_PADDING;
+    app.options.button3y = app.options.textHeight * 3 + MENU_PADDING;
 
     app.startTime = -1;
     app.timer = 0;

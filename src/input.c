@@ -7,6 +7,8 @@
 
 extern App app;
 
+static int oldX, oldY;
+
 /* This function translates the pixel x,y co-ordinates on screen
  * into x,y co-ordinates for the board
  * Also checks if the mouse is over the face*/
@@ -27,37 +29,64 @@ void getMouseBoardCoordinates(void) {
     }
 }
 
+void handleMotion(bool *updateScreen) {
+    static bool oldFaceMouseOver;
+
+    getMouseBoardCoordinates();
+
+    if(app.info.mouseDown) {
+        if(oldX != app.info.mouseX || oldY != app.info.mouseY) {
+            oldX = app.info.mouseX;
+            oldY = app.info.mouseY;
+            *updateScreen = true;
+        } else if(app.info.faceMouseOver || app.info.faceMouseOver != oldFaceMouseOver) {
+            oldFaceMouseOver = app.info.faceMouseOver;
+            *updateScreen = true;
+        }
+    }
+}
+
+void handleLeftButtonDown(bool *updateScreen) {
+    app.info.mouseDown = true;
+    getMouseBoardCoordinates();
+
+    oldX = app.info.mouseX;
+    oldY = app.info.mouseY;
+    *updateScreen = true;
+}
+
+void handleLeftButtonUp() {
+    // If the left button is raised, we must reveal the tile under the mouse
+    app.info.mouseDown = false;
+
+    // If user clicks the face, reset game
+    if(app.info.faceMouseOver) {
+        app.startTime = -1;
+        app.timer = 0;
+        newGame(app.game, getLength(app.game), getHeight(app.game), getMines(app.game));
+    } else {
+        // If this is the first move, start the timer
+        if(!getInitialised(app.game) && app.info.mouseX != -1) {
+            app.startTime = getCurrentTime();
+        }
+
+        reveal(app.game, app.info.mouseX, app.info.mouseY);
+    }
+}
+
 bool handleInput(void) {
     SDL_Event event;
     bool updateScreen = false;
-    static int oldX, oldY;
-    static bool oldFaceMouseOver;
-
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
             case SDL_QUIT:
                 exit(0);
             case SDL_MOUSEMOTION:
-                getMouseBoardCoordinates();
-                if(app.info.mouseDown) {
-                    if(oldX != app.info.mouseX || oldY != app.info.mouseY) {
-                        oldX = app.info.mouseX;
-                        oldY = app.info.mouseY;
-                        updateScreen = true;
-                    } else if(app.info.faceMouseOver || app.info.faceMouseOver != oldFaceMouseOver) {
-                        oldFaceMouseOver = app.info.faceMouseOver;
-                        updateScreen = true;
-                    }
-                }
+                handleMotion(&updateScreen);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT) {
-                    app.info.mouseDown = true;
-                    getMouseBoardCoordinates();
-
-                    oldX = app.info.mouseX;
-                    oldY = app.info.mouseY;
-                    updateScreen = true;
+                    handleLeftButtonDown(&updateScreen);
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
@@ -65,22 +94,7 @@ bool handleInput(void) {
                 // For both the left and right mouse though, we must manually set the updateScreen field
                 switch(event.button.button) {
                     case SDL_BUTTON_LEFT:
-                        // If the left button is raised, we must reveal the tile under the mouse
-                        app.info.mouseDown = false;
-
-                        // If user clicks the face, reset game
-                        if(app.info.faceMouseOver) {
-                            app.startTime = -1;
-                            app.timer = 0;
-                            newGame(app.game, getLength(app.game), getHeight(app.game), getMines(app.game));
-                        } else {
-                            // If this is the first move, start the timer
-                            if(!getInitialised(app.game) && app.info.mouseX != -1) {
-                                app.startTime = getCurrentTime();
-                            }
-
-                            reveal(app.game, app.info.mouseX, app.info.mouseY);
-                        }
+                        handleLeftButtonUp();
                         break;
                     case SDL_BUTTON_RIGHT:
                         //If the right button is raised, we must flag the tile

@@ -31,6 +31,50 @@ void mapToWindow(int *x, int *y) {
 	*y = (*y * TILE_SIZE) + app.info.boardYStart;
 }
 
+void drawBox(SDL_Rect box) {
+	SDL_RenderDrawLine(app.renderer, box.x, box.y, box.x + box.w, box.y);
+	SDL_RenderDrawLine(app.renderer, box.x, box.y, box.x, box.y + box.h);
+	SDL_RenderDrawLine(app.renderer, box.x + box.w, box.y + box.h, box.x + box.w, box.y);
+	SDL_RenderDrawLine(app.renderer, box.x + box.w, box.y + box.h, box.x, box.y + box.h);
+}
+
+void drawText(int x, int y, SDL_Texture *text) {
+	SDL_Rect dest = {x, y, 0, 0};
+	SDL_QueryTexture(text, NULL, NULL, &dest.w, &dest.h);
+
+	SDL_RenderCopy(app.renderer, text, NULL, &dest);
+}
+
+void drawMenu() {
+	SDL_Rect menuBox = {0, app.options.textHeight, app.options.boxWidth, app.options.boxHeight};
+	SDL_Rect buttonBox = {MENU_PADDING, 0, app.options.buttonWidth, app.options.textHeight};
+
+	SDL_SetRenderDrawColor(app.renderer, 160, 160, 160, 255);
+
+	SDL_RenderFillRect(app.renderer, &menuBox);
+	menuBox.y = menuBox.y + 1;
+	menuBox.h = menuBox.h - 1;
+
+	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
+
+	drawBox(menuBox);
+
+	buttonBox.y = app.options.button1y;
+	drawText(MENU_PADDING * 2, app.options.button1y, app.options.beginner);
+	drawText(MENU_PADDING * 2 + app.options.buttonWidth, app.options.button1y, app.options.beginnerSpec);
+	drawBox(buttonBox);
+
+	buttonBox.y = app.options.button2y;
+	drawText(MENU_PADDING * 2, app.options.button2y, app.options.intermediate);
+	drawText(MENU_PADDING * 2 + app.options.buttonWidth, app.options.button2y, app.options.intermediateSpec);
+	drawBox(buttonBox);
+
+	buttonBox.y = app.options.button3y;
+	drawText(MENU_PADDING * 2, app.options.button3y, app.options.expert);
+	drawText(MENU_PADDING * 2 + app.options.buttonWidth, app.options.button3y, app.options.expertSpec);
+	drawBox(buttonBox);
+}
+
 void drawFace() {
 	SDL_Rect dest = {app.info.faceXPosition, app.options.textHeight + PADDING, F_TEXTURE_OFFSET, F_TEXTURE_OFFSET};
 
@@ -57,6 +101,15 @@ void drawFace() {
 	}
 
 	SDL_RenderCopy(app.renderer, app.info.face, face, &dest);
+}
+
+void drawBanner() {
+	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
+	
+	SDL_Rect optionsBanner = {0, 0, app.info.boardXEnd + PADDING, app.options.textHeight};
+	SDL_RenderFillRect(app.renderer, &optionsBanner);
+
+	drawText(0, 0, app.options.gameb);
 }
 
 // This is for drawing either of the two 'analogue' displays
@@ -165,21 +218,14 @@ void drawScene() {
 
 	drawFace();
 
-	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
-	
-	SDL_Rect optionsBanner = {0, 0, app.info.boardXEnd + PADDING, app.options.textHeight};
-	SDL_RenderFillRect(app.renderer, &optionsBanner);
-
-	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
-
-	SDL_Rect textRect = {0, 0, 0, 0};
-	SDL_QueryTexture(app.options.gameb, NULL, NULL, &textRect.w, &textRect.h);
-	SDL_RenderCopy(app.renderer, app.options.gameb, NULL, &textRect);
+	drawBanner();
 
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 
 	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight, app.info.boardXEnd + PADDING, app.options.textHeight);
 	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight + DISPLAY_BANNER, app.info.boardXEnd + PADDING, app.options.textHeight + DISPLAY_BANNER);
+
+	drawMenu();
 	
     SDL_RenderPresent(app.renderer);
 }

@@ -5,5 +5,6 @@
 #define DISPLAY_BANNER (PADDING * 2 + 64)
 #define TILE_SIZE 32
 #define MIN_WINDOW_WIDTH (PADDING * 4 + 32 * 6 + 64)
+#define MENU_PADDING 5
 
 #endif

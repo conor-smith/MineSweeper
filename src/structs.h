@@ -8,7 +8,7 @@
 
 typedef struct {
     SDL_Texture *gameb, *gamew, *beginner, *beginnerSpec, *intermediate, *intermediateSpec, *expert, *expertSpec;
-    int buttonWidth, textHeight, boxWidth, boxHeight;
+    int buttonWidth, textHeight, boxWidth, boxHeight, button1y, button2y, button3y;
     bool visible, button1, button2, button3;
 } OptionsMenu;
 

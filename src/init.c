@@ -73,6 +73,7 @@ void init(void) {
     app.options.lengthWarning = createText(sans, "<=50", grey);
     app.options.heightWarning = createText(sans, "<=20", grey);
     app.options.minesWarning = createText(sans, "<=999", grey);
+    app.options.enter = createText(sans, "ENTER to start", black);
     app.options.cursor1 = 0;
     app.options.cursor2 = 0;
     app.options.cursor3 = 0;
@@ -102,6 +103,10 @@ void init(void) {
     app.options.boxWidth = MENU_PADDING * 3 + app.options.buttonWidth + infoWidth;
     app.options.boxHeight = app.options.textHeight * 4 + MENU_PADDING * 2;
     app.options.textBoxWitdh = app.options.boxWidth - (MENU_PADDING * 3 + app.options.labelWidth);
+
+    // Either the size of the menu, or the size of the two analogue displays and face
+    app.info.minWidth = PADDING * 4 + 32 * 6 + 64;
+    app.info.minWidth = app.info.minWidth < app.options.boxWidth ? app.options.boxWidth + 1 : app.info.minWidth;
 
     app.options.button1y = app.options.textHeight + MENU_PADDING;
     app.options.button2y = app.options.textHeight * 2 + MENU_PADDING;

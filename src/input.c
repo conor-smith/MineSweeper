@@ -241,6 +241,10 @@ void handleKeyboard(SDL_KeyboardEvent *event, bool *updateScreen) {
                 valid = false;
             }
 
+            if(app.options.cursor1 == 0 || app.options.cursor2 == 0 || app.options.cursor3 == 0) {
+                valid = false;
+            }
+
             if(valid) {
                 app.info.menuOpen = false;
                 app.options.customMenu = false;

@@ -88,6 +88,7 @@ void drawCustomMenu() {
 	drawText(MENU_PADDING, app.options.button1y, app.options.length);
 	drawText(MENU_PADDING, app.options.button2y, app.options.height);
 	drawText(MENU_PADDING, app.options.button3y, app.options.mines);
+	drawText(MENU_PADDING, app.options.button4y, app.options.enter);
 
 	int cursor1, cursor2, cursor3;
 	if(app.options.cursor1 == 0) {
@@ -195,7 +196,7 @@ void drawFace() {
 void drawBanner() {
 	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
 	
-	SDL_Rect optionsBanner = {0, 0, app.info.boardXEnd + PADDING, app.options.textHeight};
+	SDL_Rect optionsBanner = {0, 0, app.info.analogue2Xposition + 32 * 3 + PADDING, app.options.textHeight};
 	SDL_RenderFillRect(app.renderer, &optionsBanner);
 
 	if(app.info.gameButtonMouseOver) {
@@ -308,10 +309,10 @@ void drawScene() {
 
 	// Number of unflagged mines left
 	int unflaggedMines = getMines(app.game) - getFlagged(app.game);
-	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, 10, app.options.textHeight + PADDING);
+	drawAnalogue(unflaggedMines > 0 ? unflaggedMines : 0, PADDING, app.options.textHeight + PADDING);
 
 	//Timer
-	drawAnalogue(app.timer, app.info.boardXEnd - 96, app.options.textHeight + PADDING);
+	drawAnalogue(app.timer, app.info.analogue2Xposition, app.options.textHeight + PADDING);
 
 	drawFace();
 
@@ -319,8 +320,8 @@ void drawScene() {
 
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 
-	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight, app.info.boardXEnd + PADDING, app.options.textHeight);
-	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight + DISPLAY_BANNER, app.info.boardXEnd + PADDING, app.options.textHeight + DISPLAY_BANNER);
+	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight, app.info.analogue2Xposition + 32 * 3 + PADDING, app.options.textHeight);
+	SDL_RenderDrawLine(app.renderer, 0, app.options.textHeight + DISPLAY_BANNER, app.info.analogue2Xposition + 32 * 3 + PADDING, app.options.textHeight + DISPLAY_BANNER);
 
 	if(app.info.menuOpen && app.options.customMenu) {
 		drawCustomMenu();

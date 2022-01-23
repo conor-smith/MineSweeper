@@ -70,6 +70,9 @@ void drawMenu() {
 	} else if(app.options.button3) {
 		highlightedButton.y = app.options.button3y;
 		SDL_RenderFillRect(app.renderer, &highlightedButton);
+	} else if(app.options.button4) {
+		highlightedButton.y = app.options.button4y;
+		SDL_RenderFillRect(app.renderer, &highlightedButton);
 	}
 
 	buttonBox.y = app.options.button1y;
@@ -85,6 +88,10 @@ void drawMenu() {
 	buttonBox.y = app.options.button3y;
 	drawText(MENU_PADDING * 2, app.options.button3y, app.options.expert);
 	drawText(MENU_PADDING * 2 + app.options.buttonWidth, app.options.button3y, app.options.expertSpec);
+	drawBox(buttonBox);
+
+	buttonBox.y = app.options.button4y;
+	drawText(MENU_PADDING * 2, app.options.button4y, app.options.custom);
 	drawBox(buttonBox);
 }
 

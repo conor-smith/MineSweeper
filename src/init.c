@@ -65,6 +65,21 @@ void init(void) {
     app.options.intermediateSpec = createText(sans, "16x16, 40 mines", black);
     app.options.expert = createText(sans, "Expert", black);
     app.options.expertSpec = createText(sans, "16x30, 99 mines", black);
+    app.options.custom = createText(sans, "Custom", black);
+    app.options.length = createText(sans, "length", black);
+    app.options.height = createText(sans, "height", black);
+    app.options.mines = createText(sans, "mines", black);
+    app.options.cursor1 = 0;
+    app.options.cursor2 = 0;
+    app.options.cursor3 = 0;
+
+    char numberString[2];
+    numberString[1] = '\0';
+
+    for(char i = '0';i <= '9';i++) {
+        numberString[0] = i;
+        app.options.numbers[i - '0'] = createText(sans, numberString, black);
+    }
 
     TTF_CloseFont(sans);
 
@@ -79,11 +94,12 @@ void init(void) {
     SDL_QueryTexture(app.options.expertSpec, NULL, NULL, &infoWidth, &app.options.textHeight);
 
     app.options.boxWidth = MENU_PADDING * 3 + app.options.buttonWidth + infoWidth;
-    app.options.boxHeight = app.options.textHeight * 3 + MENU_PADDING * 2;
+    app.options.boxHeight = app.options.textHeight * 4 + MENU_PADDING * 2;
 
     app.options.button1y = app.options.textHeight + MENU_PADDING;
     app.options.button2y = app.options.textHeight * 2 + MENU_PADDING;
     app.options.button3y = app.options.textHeight * 3 + MENU_PADDING;
+    app.options.button4y = app.options.textHeight * 4 + MENU_PADDING;
 
     setNewWindowSize();
 }

@@ -33,6 +33,7 @@ void getButton(int x, int y, bool *updateScreen) {
     app.options.button1 = false;
     app.options.button2 = false;
     app.options.button3 = false;
+    app.options.button4 = false;
 
     if(x >= MENU_PADDING && x < MENU_PADDING + app.options.buttonWidth) {
         if(y >= app.options.button1y && y < app.options.button2y) {
@@ -43,8 +44,12 @@ void getButton(int x, int y, bool *updateScreen) {
             app.options.button2 = true;
             *updateScreen = true;
             wasOverButton = true;
-        } else if(y >= app.options.button3y && y < app.options.button3y + app.options.textHeight) {
+        } else if(y >= app.options.button3y && y < app.options.button4y) {
             app.options.button3 = true;
+            *updateScreen = true;
+            wasOverButton = true;
+        }else if(y >= app.options.button4y && y < app.options.button4y + app.options.textHeight) {
+            app.options.button4 = true;
             *updateScreen = true;
             wasOverButton = true;
         } else if(wasOverButton) {

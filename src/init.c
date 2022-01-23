@@ -72,6 +72,7 @@ void init(void) {
     app.options.cursor1 = 0;
     app.options.cursor2 = 0;
     app.options.cursor3 = 0;
+    app.options.customMenu = false;
 
     char numberString[2];
     numberString[1] = '\0';
@@ -88,6 +89,7 @@ void init(void) {
     app.options.buttonWidth += MENU_PADDING * 2;
 
     int throwAway;
+    SDL_QueryTexture(app.options.length, NULL, NULL, &app.options.labelWidth, &throwAway);
     SDL_QueryTexture(app.options.gameb, NULL, NULL, &app.options.gameButtonWidth, &throwAway);
 
     int infoWidth;
@@ -95,6 +97,7 @@ void init(void) {
 
     app.options.boxWidth = MENU_PADDING * 3 + app.options.buttonWidth + infoWidth;
     app.options.boxHeight = app.options.textHeight * 4 + MENU_PADDING * 2;
+    app.options.textBoxWitdh = app.options.boxWidth - (MENU_PADDING * 3 + app.options.labelWidth);
 
     app.options.button1y = app.options.textHeight + MENU_PADDING;
     app.options.button2y = app.options.textHeight * 2 + MENU_PADDING;

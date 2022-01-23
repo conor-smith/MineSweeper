@@ -74,7 +74,7 @@ void handleMotion(bool *updateScreen) {
         oldGameButtonMouseOver = app.info.gameButtonMouseOver;
     }
 
-    if(app.info.menuOpen) {
+    if(app.info.menuOpen && !app.options.customMenu) {
         getButton(x, y, updateScreen);
     }
 
@@ -107,6 +107,7 @@ void handleLeftButtonDown(bool *updateScreen) {
     }
 }
 
+// No need for updateScreen here. The screen will always update after a click
 void handleLeftButtonUp() {
     // If the left button is raised, we must reveal the tile under the mouse
     app.info.mouseDown = false;
@@ -118,6 +119,20 @@ void handleLeftButtonUp() {
 
         if(!(x >= 0 && x < app.options.boxWidth && y >= app.options.textHeight && y < app.options.textHeight + app.options.boxHeight)) {
             app.info.menuOpen = false;
+            app.options.customMenu = false;
+        } else if(app.options.customMenu) {
+            app.options.button1 = false;
+            app.options.button2 = false;
+            app.options.button3 = false;
+            if(x > app.options.labelWidth + MENU_PADDING * 2 && x < app.options.labelWidth + MENU_PADDING * 2 + app.options.textBoxWitdh) {
+                if(y > app.options.button1y && y < app.options.button2y) {
+                    app.options.button1 = true;
+                } else if(y > app.options.button2y && y < app.options.button3y) {
+                    app.options.button2 = true;
+                } else if(y > app.options.button3y && y < app.options.button4y) {
+                    app.options.button3 = true;
+                }
+            } 
         } else {
             bool throwAway;
             getButton(x, y, &throwAway);
@@ -131,6 +146,8 @@ void handleLeftButtonUp() {
             } else if(app.options.button3) {
                 newGame(app.game, 30, 16, 99);
                 setNewWindowSize();
+            } else if(app.options.button4) {
+                app.options.customMenu = true;
             }
         }
     } else if(app.info.gameButtonMouseOver) {
@@ -179,7 +196,9 @@ bool handleInput(void) {
                         break;
                     case SDL_BUTTON_RIGHT:
                         //If the right button is raised, we must flag the tile
-                        flag(app.game, app.info.mouseX, app.info.mouseY);
+                        if(!app.info.menuOpen) {
+                            flag(app.game, app.info.mouseX, app.info.mouseY);
+                        }
                         break;
                 }
                 updateScreen = true;

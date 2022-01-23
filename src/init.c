@@ -71,8 +71,8 @@ void init(void) {
     app.options.height = createText(sans, "height", black);
     app.options.mines = createText(sans, "mines", black);
     app.options.lengthWarning = createText(sans, "<=50", grey);
-    app.options.lengthWarning = createText(sans, "<=20", grey);
-    app.options.lengthWarning = createText(sans, "<=999", grey);
+    app.options.heightWarning = createText(sans, "<=20", grey);
+    app.options.minesWarning = createText(sans, "<=999", grey);
     app.options.cursor1 = 0;
     app.options.cursor2 = 0;
     app.options.cursor3 = 0;

@@ -170,12 +170,21 @@ void handleLeftButtonUp() {
     }
 }
 
+int power(int base, int power) {
+    int toReturn = 1;
+    for(int i = 0;i < power;i++) {
+        toReturn *= base;
+    }
+
+    return toReturn;
+}
+
 int parseTextBox(int cursor, int *textBox) {
     int toReturn = 0;
     int cursorOriginalValue = cursor;
     for(int i = 0;i< cursorOriginalValue;i++) {
-        toReturn += ((int) pow(10.0, (double) cursor)) * textBox[i];
         cursor--;
+        toReturn += power(10, cursor) * textBox[i];
     }
     return toReturn;
 }
@@ -186,36 +195,38 @@ void handleKeyboard(SDL_KeyboardEvent *event, bool *updateScreen) {
         if(app.options.button1) {
             if(event->keysym.scancode == SDL_SCANCODE_BACKSPACE && app.options.cursor1 > 0){
                 app.options.cursor1--;
-            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor1 < 3) {
+            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor1 < 2) {
                 app.options.lengthString[app.options.cursor1] = 0;
                 app.options.cursor1++;
-            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor1 < 3) {
-                app.options.lengthString[app.options.cursor1] = event->keysym.scancode - SDL_SCANCODE_1;
+            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor1 < 2) {
+                app.options.lengthString[app.options.cursor1] = event->keysym.scancode - SDL_SCANCODE_1 + 1;
                 app.options.cursor1++;
             }
         } else if(app.options.button2) {
             if(event->keysym.scancode == SDL_SCANCODE_BACKSPACE && app.options.cursor2 > 0){
                 app.options.cursor2--;
-            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor2 < 3) {
+            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor2 < 2) {
                 app.options.heightString[app.options.cursor2] = 0;
                 app.options.cursor2++;
-            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor2 < 3) {
-                app.options.heightString[app.options.cursor2] = event->keysym.scancode - SDL_SCANCODE_1;
+            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor2 < 2) {
+                app.options.heightString[app.options.cursor2] = event->keysym.scancode - SDL_SCANCODE_1 + 1;
                 app.options.cursor2++;
             }
         } else if(app.options.button3) {
             if(event->keysym.scancode == SDL_SCANCODE_BACKSPACE && app.options.cursor3 > 0){
                 app.options.cursor3--;
-            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor3 < 4) {
+            } else if(event->keysym.scancode == SDL_SCANCODE_0 && app.options.cursor3 < 3) {
                 app.options.minesString[app.options.cursor3] = 0;
                 app.options.cursor3++;
-            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor3 < 4) {
-                app.options.minesString[app.options.cursor3] = event->keysym.scancode - SDL_SCANCODE_1;
+            } else if(event->keysym.scancode < SDL_SCANCODE_0 && event->keysym.scancode >= SDL_SCANCODE_1 && app.options.cursor3 < 3) {
+                app.options.minesString[app.options.cursor3] = event->keysym.scancode - SDL_SCANCODE_1 + 1;
                 app.options.cursor3++;
             }
-        } else if(event->keysym.scancode == SDL_SCANCODE_RETURN || event->keysym.scancode == SDL_SCANCODE_RETURN2) {
+        }
+        
+        if(event->keysym.scancode == SDL_SCANCODE_RETURN || event->keysym.scancode == SDL_SCANCODE_RETURN2 || event->keysym.scancode == SDL_SCANCODE_KP_ENTER) {
             int length = parseTextBox(app.options.cursor1, app.options.lengthString);
-            int height = parseTextBox(app.options.cursor1, app.options.heightString);
+            int height = parseTextBox(app.options.cursor2, app.options.heightString);
             int mines = parseTextBox(app.options.cursor3, app.options.minesString);
 
             bool valid = true;
@@ -233,6 +244,9 @@ void handleKeyboard(SDL_KeyboardEvent *event, bool *updateScreen) {
             if(valid) {
                 app.info.menuOpen = false;
                 app.options.customMenu = false;
+                app.options.cursor1 = 0;
+                app.options.cursor2 = 0;
+                app.options.cursor3 = 0;
 
                 newGame(app.game, length, height, mines);
                 setNewWindowSize();

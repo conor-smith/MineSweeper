@@ -50,7 +50,7 @@ int drawText(int x, int y, SDL_Texture *text) {
 
 int drawUserText(int x, int y, int cursor, int *numbers) {
 	for(int i = 0;i < cursor;i++) {
-		x = x + drawText(x, y, app.options.numbers[i]);
+		x = x + drawText(x, y, app.options.numbers[numbers[i]]);
 	}
 
 	return x;
@@ -92,20 +92,23 @@ void drawCustomMenu() {
 	int cursor1, cursor2, cursor3;
 	if(app.options.cursor1 == 0) {
 		drawText(MENU_PADDING + boxXValue, app.options.button1y, app.options.lengthWarning);
+		cursor1 = MENU_PADDING + boxXValue;
 	} else {
 		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button1y, app.options.cursor1, app.options.lengthString);
 	}
 
 	if(app.options.cursor2 == 0) {
-		drawText(MENU_PADDING + boxXValue, app.options.button2y, app.options.lengthWarning);
+		drawText(MENU_PADDING + boxXValue, app.options.button2y, app.options.heightWarning);
+		cursor2 = MENU_PADDING + boxXValue;
 	} else {
-		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button2y, app.options.cursor2, app.options.heightString);
+		cursor2 = drawUserText(MENU_PADDING + boxXValue, app.options.button2y, app.options.cursor2, app.options.heightString);
 	}
 
 	if(app.options.cursor3 == 0) {
-		drawText(MENU_PADDING + boxXValue, app.options.button3y, app.options.lengthWarning);
+		drawText(MENU_PADDING + boxXValue, app.options.button3y, app.options.minesWarning);
+		cursor3 = MENU_PADDING + boxXValue;
 	} else {
-		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button3y, app.options.cursor3, app.options.minesString);
+		cursor3 = drawUserText(MENU_PADDING + boxXValue, app.options.button3y, app.options.cursor3, app.options.minesString);
 	}
 
 	// Cursor

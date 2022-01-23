@@ -40,11 +40,20 @@ void drawBox(SDL_Rect box) {
 	SDL_RenderDrawLine(app.renderer, box.x + box.w, box.y + box.h, box.x, box.y + box.h);
 }
 
-void drawText(int x, int y, SDL_Texture *text) {
+int drawText(int x, int y, SDL_Texture *text) {
 	SDL_Rect dest = {x, y, 0, 0};
 	SDL_QueryTexture(text, NULL, NULL, &dest.w, &dest.h);
 
 	SDL_RenderCopy(app.renderer, text, NULL, &dest);
+	return dest.w;
+}
+
+int drawUserText(int x, int y, int cursor, int *numbers) {
+	for(int i = 0;i < cursor;i++) {
+		x = x + drawText(x, y, app.options.numbers[i]);
+	}
+
+	return x;
 }
 
 void drawMenuBox() {
@@ -66,15 +75,13 @@ void drawCustomMenu() {
 
 	SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
 
-	for(int i = 0;i < 3;i++) {
-		SDL_Rect textBox = {MENU_PADDING * 2 + app.options.labelWidth, i * app.options.textHeight + app.options.button1y, app.options.textBoxWitdh, app.options.textHeight};
+	int boxXValue = MENU_PADDING * 2 + app.options.labelWidth;
 
+	for(int i = 0;i < 3;i++) {
+		SDL_Rect textBox = {boxXValue, i * app.options.textHeight + app.options.button1y, app.options.textBoxWitdh, app.options.textHeight};
+
+		SDL_SetRenderDrawColor(app.renderer, 255, 255, 255, 255);
 		SDL_RenderFillRect(app.renderer, &textBox);
-	}
-
-	for(int i = 0;i < 3;i++) {
-		SDL_Rect textBox = {MENU_PADDING * 2 + app.options.labelWidth, i * app.options.textHeight + app.options.button1y, app.options.textBoxWitdh, app.options.textHeight};
-
 		drawBox(textBox);
 	}
 
@@ -82,15 +89,34 @@ void drawCustomMenu() {
 	drawText(MENU_PADDING, app.options.button2y, app.options.height);
 	drawText(MENU_PADDING, app.options.button3y, app.options.mines);
 
+	int cursor1, cursor2, cursor3;
+	if(app.options.cursor1 == 0) {
+		drawText(MENU_PADDING + boxXValue, app.options.button1y, app.options.lengthWarning);
+	} else {
+		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button1y, app.options.cursor1, app.options.lengthString);
+	}
+
+	if(app.options.cursor2 == 0) {
+		drawText(MENU_PADDING + boxXValue, app.options.button2y, app.options.lengthWarning);
+	} else {
+		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button2y, app.options.cursor2, app.options.heightString);
+	}
+
+	if(app.options.cursor3 == 0) {
+		drawText(MENU_PADDING + boxXValue, app.options.button3y, app.options.lengthWarning);
+	} else {
+		cursor1 = drawUserText(MENU_PADDING + boxXValue, app.options.button3y, app.options.cursor3, app.options.minesString);
+	}
+
 	// Cursor
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 	int xValue = MENU_PADDING * 3 + app.options.labelWidth;
 	if(app.options.button1) {
-		SDL_RenderDrawLine(app.renderer, xValue, app.options.button1y + 3, xValue, app.options.button2y - 2);
+		SDL_RenderDrawLine(app.renderer, cursor1, app.options.button1y + 3, cursor1, app.options.button2y - 2);
 	} else if(app.options.button2) {
-		SDL_RenderDrawLine(app.renderer, xValue, app.options.button2y + 3, xValue, app.options.button3y - 2);
+		SDL_RenderDrawLine(app.renderer, cursor2, app.options.button2y + 3, cursor2, app.options.button3y - 2);
 	} else if(app.options.button3) {
-		SDL_RenderDrawLine(app.renderer, xValue, app.options.button3y + 3, xValue, app.options.button4y - 2);
+		SDL_RenderDrawLine(app.renderer, cursor3, app.options.button3y + 3, cursor3, app.options.button4y - 2);
 	}
 }
 

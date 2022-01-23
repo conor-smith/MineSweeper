@@ -56,6 +56,7 @@ void init(void) {
     TTF_Font *sans = TTF_OpenFont("img/OpenSans-Bold.ttf", 20);
     SDL_Color black = {0, 0, 0};
     SDL_Color white = {255, 255, 255};
+    SDL_Color grey = {127, 127, 127};
 
     app.options.gameb = createText(sans, "Game", black);
     app.options.gamew = createText(sans, "Game", white);
@@ -69,6 +70,9 @@ void init(void) {
     app.options.length = createText(sans, "length", black);
     app.options.height = createText(sans, "height", black);
     app.options.mines = createText(sans, "mines", black);
+    app.options.lengthWarning = createText(sans, "<=50", grey);
+    app.options.lengthWarning = createText(sans, "<=20", grey);
+    app.options.lengthWarning = createText(sans, "<=999", grey);
     app.options.cursor1 = 0;
     app.options.cursor2 = 0;
     app.options.cursor3 = 0;

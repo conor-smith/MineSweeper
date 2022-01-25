@@ -15,6 +15,8 @@ SDL_Texture *createText(TTF_Font *font, const char *text, SDL_Color colour) {
     SDL_Surface *surface = TTF_RenderText_Solid(font, text, colour);
 
     SDL_Texture *texture = SDL_CreateTextureFromSurface(app.renderer, surface);
+
+    return texture;
 }
 
 // Just a big ol' grand initialization of everything

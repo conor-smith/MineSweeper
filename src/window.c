@@ -20,11 +20,13 @@ void setNewWindowSize() {
     app.info.menuOpen = false;
 
     int length = app.info.boardXEnd + PADDING;
-    length = length < app.info.minWidth ? app.info.minWidth : length;
     int height = app.info.boardYEnd + PADDING;
 
-    app.info.faceXPosition = length / 2 - 32;
+    app.info.faceXPosition = length / 2 - 32; // thing
     app.info.analogue2Xposition = length - PADDING - (32 * 3);
 
     SDL_SetWindowSize(app.window, length, height);
+
+
+    // This is a change
 }

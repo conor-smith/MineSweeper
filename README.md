@@ -8,7 +8,8 @@ A project with the following goals
 
 ## Dependencies
 - [SDL2](https://www.libsdl.org/) (Not currently compatible with SDL3)
-- [ncurses](https://invisible-island.net/ncurses/announce.html)
+- [ncurses](https://invisible-island.net/ncurses/announce.html) (Not required if only building GUI)
+- [gcc](https://gcc.gnu.org/)
 
 ## Build
 To build GUI, simply run
